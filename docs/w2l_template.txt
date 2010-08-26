@@ -1,0 +1,32 @@
+===Hauptdatei===
+<!--
+Every W2L-Template must be in the Namespace "LaTeX" and must begin with "W2L_"!
+
+the latexfile tag defines a tex-file. This one here is going to be created as Main.tex,
+which is a file, every template needs, because pdflatex is called with Main.tex.
+
+If you add another one, you could give it any name, and the file is created, and can be
+used via \input or \include with the appropriate name.
+
+You can even load files, which are not dependend on your templates. For this to work, 
+you need to follow these steps:
+1. Create a page in your LaTeX-namespace (like: LaTeX:Foobar)
+2. Before the first latexfile-command in your template insert this:
+<latexpage>LaTeX:Foobar</latexpage>
+3. Open the latex-page and fill put your latex-source into one latex-tag. Everything
+outside will be ignored.
+4. Your W2L-Latex-Template can \input or \include it via \input{Foobar}
+
+
+-->
+<latexfile name="Main">
+\documentclass[12pt, a4paper]{scrartcl}
+\usepackage[ngerman]{babel}
+\usepackage[utf8x]{inputenc} % This is very important!
+\usepackage[T1]{fontenc}
+\usepackage{eurosym} % required to show the euro-sign. Without it, the urosign can't be shown
+\title{((Title))}
+\begin{document}
+((WikiContent))
+\end{document}
+</latexfile>

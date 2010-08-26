@@ -1,0 +1,21 @@
+==Heading One==
+Some words. 
+
+==Heading Two==
+LaLa
+
+Everything between this noinclude-tag is not parsed into the template, so here we can set template-vars, etc.
+<noinclude>
+
+==Footnotes==
+<references/>
+
+==Template-Variables==
+<!--
+Have a look at the example W2L-Template, where you can see, how these vars are inserted into a W2L-template.
+
+Every template-var needs one tag.
+-->
+<templatevar vname="Test">This content is not interpreted in any way. It can be plain-\LaTeX{}</templatevar>
+<templatevar vname="Title">This is an example</templatevar>
+</noinclude>

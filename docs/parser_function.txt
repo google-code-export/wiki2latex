@@ -1,0 +1,13 @@
+/*
+Parserfunctions are processed prior to any latex-conversion, so all original function
+should be usable as long as they don't call the parser-object itself, as W2L looks
+a bit different on the inside, than what a function designed for the original parser
+could imagine.
+
+Look at the mediawiki manual to see, how parserfunctions are registered to Mediawiki.
+If they are, you need to register them to W2L by this line (or have a look at w2lConfig.php):
+$w2l_pFunctions['myParserFunction']    = 'myParserFunction';
+
+Please have a look at existing parserfunctions to learn, how to create your own.
+
+*/

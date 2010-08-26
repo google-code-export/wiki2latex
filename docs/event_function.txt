@@ -1,0 +1,13 @@
+/*
+Wiki2LaTeX now uses common hooks as implemented in Mediawiki. 
+The function is registered by this command in your w2lConfig.php
+or by setting the hooks in the file of the function.
+
+$wgHooks['w2lFinish'][] = 'MyHookFunction';
+
+*/
+
+function MyHookFunction( &parser, &$str ) {
+	$str = str_replace('this', 'that', $str);
+	return true;
+}

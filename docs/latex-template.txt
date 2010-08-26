@@ -1,0 +1,13 @@
+===Hauptdatei===
+<latexfile name="Main">
+\documentclass[12pt, a4paper]{scrartcl}
+
+\usepackage[utf8x]{inputenc} % This is very important!
+\usepackage[T1]{fontenc}
+
+\begin{document}
+((WikiContent))
+
+((Test))
+\end{document}
+</latexfile>
