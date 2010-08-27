@@ -49,6 +49,7 @@ $wgAutoloadClasses['Wiki2LaTeXCore']     = dirname(__FILE__) . '/w2lCore.php';
 $wgAutoloadClasses['Wiki2LaTeXCompiler'] = dirname(__FILE__) . '/w2lLaTeXCompiler.php';
 
 $wgHooks['SkinTemplateContentActions'][] = array(&$w2lHelper);
+$wgHooks['SkinTemplateNavigation'][] = array(&$w2lHelper);
 $wgHooks['UnknownAction'][]              = array($w2lHelper);
 $wgHooks['BeforePageDisplay'][]          = array(&$w2lHelper);
 

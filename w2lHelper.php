@@ -31,7 +31,7 @@ class Wiki2LaTeXHelper {
 		$this->messagesLoaded = false;
 		$this->config  =& $w2lConfig;
 		$this->actions = array('w2llatexform', 'w2ltexfiles', 'w2lpdf', 'w2ltextarea', 'w2lcleartempfolder');
-		
+
 		return true;       
 	}
 
@@ -70,6 +70,7 @@ class Wiki2LaTeXHelper {
 li#ca-latex {margin-left:1.6em;}
 /*]]>*/</style>
 EOF;
+
 		$out->addScript($script."\n");
 
 		return true;
@@ -82,7 +83,8 @@ EOF;
 		global $wgTitle;
 
 		if ($this->messagesLoaded == false ) {
-			$this->onLoadAllMessages();
+			wfLoadExtensionMessages( 'wiki2latex' );
+			$this->messagesLoaded = true;
 		}
 		$values = new webRequest();
 		$action = $values->getVal('action');
@@ -96,6 +98,35 @@ EOF;
 
 		if ( ( in_array($current_ns, $this->config['allowed_ns']) ) and !in_array($action, $disallow_actions)) {
 			$content_actions['latex'] = array(
+				'class' => ( in_array($action, $this->actions )  ) ? 'selected' : false,
+				'text' => wfMsg('w2l_tab'),
+				'href' => $wgTitle->getLocalUrl( 'action=w2llatexform' )
+			);
+		}
+
+		return true;
+	}
+	
+	public function onSkinTemplateNavigation(&$sktemplate, &$links) {
+
+		global $wgUser, $wgTitle;
+
+		if ($this->messagesLoaded == false ) {
+			wfLoadExtensionMessages( 'wiki2latex' );
+			$this->messagesLoaded = true;
+		}
+		$values = new webRequest();
+		$action = $values->getVal('action');
+
+		$current_ns       = $wgTitle->getNamespace();
+		$disallow_actions = array('edit', 'submit'); // disallowed actions
+
+		if ( ($wgUser->getID() == 0) AND ($this->config['allow_anonymous'] == false) ) {
+			return true;
+		}
+
+		if ( ( in_array($current_ns, $this->config['allowed_ns']) ) and !in_array($action, $disallow_actions)) {
+			$links['views']['wiki2latex'] = array(
 				'class' => ( in_array($action, $this->actions )  ) ? 'selected' : false,
 				'text' => wfMsg('w2l_tab'),
 				'href' => $wgTitle->getLocalUrl( 'action=w2llatexform' )
