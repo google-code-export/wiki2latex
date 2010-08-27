@@ -36,7 +36,6 @@ $w2lConfig['debug'] = false;
 // Adding some default extension-tags:
 include_once('contrib/math.php');
 include_once('contrib/pre.php');
-include_once('contrib/ref.php');
 
 // Default Values used by form:
 $w2lConfig['default_action']   = 'w2ltextarea'; // Possible Values: w2ltextarea, w2ltexfiles, w2lpdf
@@ -47,8 +46,7 @@ $w2lConfig['docclass'] = 'article';
 $w2lConfig['process_curly_braces'] = '2';
 
 // This command should work. Before your try to enable pdfexport, please try this
-// command on your local shell. It is only tested with Ubuntu 8.04 but should work
-// with Windows as well.
+// command on your local shell.
 $w2lConfig['ltx_command'] = 'pdflatex -interaction=batchmode %file%';
 $w2lConfig['ltx_sort']    = 'makeindex %file%'; // unused
 $w2lConfig['ltx_bibtex']  = 'bibtex %file%';    // unused

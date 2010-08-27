@@ -20,16 +20,11 @@ if ( !defined('MEDIAWIKI') ) {
 	exit( 1 );
 }
 
-define('W2L_VERSION', 'pre-0.10');
+define('W2L_VERSION', 'pre-0.10rc3');
 
 $w2lConfig          = array();
 $w2lTags            = array();
 $w2lParserFunctions = array();
-
-// for compatibility...
-$w2l_config     =& $w2lConfig;
-$w2l_tags       =& $w2lTags;
-$w2l_pFunctions =& $w2lParserFunctions;
 
 // Require the class-files
 require_once('w2lTags.php');
@@ -53,12 +48,11 @@ $wgAutoloadClasses['Wiki2LaTeXParser']   = dirname(__FILE__) . '/w2lParser.php';
 $wgAutoloadClasses['Wiki2LaTeXCore']     = dirname(__FILE__) . '/w2lCore.php';
 $wgAutoloadClasses['Wiki2LaTeXCompiler'] = dirname(__FILE__) . '/w2lLaTeXCompiler.php';
 
-$wgHooks['LoadAllMessages'][]            = array(&$w2lHelper);
 $wgHooks['SkinTemplateContentActions'][] = array(&$w2lHelper);
 $wgHooks['UnknownAction'][]              = array($w2lHelper);
 $wgHooks['BeforePageDisplay'][]          = array(&$w2lHelper);
 
-$wgExtensionMessagesFiles['wiki2latex'] = dirname( __FILE__ ) . '/w2lMessages.php';
+$wgExtensionMessagesFiles['wiki2latex']  = dirname( __FILE__ ) . '/w2lMessages.php';
 
 $wgExtensionFunctions[] = array(&$w2lHelper, 'Setup');
 $wgExtensionFunctions[] = array(&$w2lExtensionTags, 'Setup');

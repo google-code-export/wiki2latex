@@ -35,7 +35,7 @@ include('contrib/linkify.php');           // Internal Links are created
 /* Mediawiki-Extensions */
 // include('contrib/math.php');            // Adds math-support
 // include('contrib/ParserFunctions.php'); // Adds ParserFunctions
-// include('contrib/ref.php');             // Adds citation-support
+// include('contrib/ref.php');             // Adds citation-support (<ref></ref>)
 // include('contrib/source.php');          // Adds source-tag
 // include('contrib/StringFunctions.php'); // Adds StringFunctions
 

@@ -8,7 +8,7 @@ $w2l_tags['noindent'] = "NoIndent";
 The W2L-Parser submits an additional value ($mode), so a function can decide,
 what output should be returned.
 */
-function NoIndent($input, $argv, &$parser, $mode = 'wiki') {
+function NoIndent($input, $argv, $parser, $mode = 'wiki') {
 	switch($mode) {
 		case 'latex':
 			return '{\noindent}';

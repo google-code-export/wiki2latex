@@ -40,11 +40,13 @@ class Wiki2LaTeXHelper {
 
 		// A current MW-Version is required so check for it...
 		wfUseMW($this->required_mw);
-
+		
+		
 		// Check if messages are loaded. If not do so.
 		if ($this->messagesLoaded == false ) {
 
-			$this->onLoadAllMessages();
+			wfLoadExtensionMessages( 'wiki2latex' );
+			$this->messagesLoaded = true;
 		}
 
 		$wgExtensionCredits['other'][] = array(
@@ -100,11 +102,6 @@ EOF;
 			);
 		}
 
-		return true;
-	}
-
-	public function onLoadAllMessages() {
-		wfLoadExtensionMessages( 'wiki2latex' );
 		return true;
 	}
 

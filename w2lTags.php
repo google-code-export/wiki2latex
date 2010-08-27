@@ -180,9 +180,4 @@ class Wiki2LaTeXTags {
 		}
 	}
 	
-	function w2l($input, $argv, $parser, $mode = 'wiki') {
-		// input will contain all the config-parameters, which shall be predefined by a template
-		// 	
-	
-	}
 }

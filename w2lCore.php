@@ -323,8 +323,6 @@ class Wiki2LaTeXCore {
 		// Adding some Template-Variables...
 		$template_vars['W2L_CONTENT'] =& $parsed; //new templates should use this one!
 		$template_vars['W2L_VERSION'] = $this->version;
-		// For compatibility-reasons:
-		$template_vars['WikiContent'] =& $parsed; // Old, for compatibility
 
 		// Now the template vars need to be put into ((var))
 		$tpl_vars = array();

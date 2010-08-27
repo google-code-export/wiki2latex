@@ -1,0 +1,7 @@
+* Removed ((WikiContent)) in LaTeX-Templates. Replace it with: ((W2L_CONTENT))
+* Removed support for old config-arrays $w2l_config and others. This only affects very old installations. Change them in your config files as such:
+** $w2l_config     to $w2lConfig;
+** $w2l_tags       to $w2lTags;
+** $w2l_pFunctions to $w2lParserFunctions;
+* Added German Translation
+* Removed reference-support from w2lDefaultSettings.php. Reactivate it by adding include('contrib/ref.php'); to your own w2lConfig.php
