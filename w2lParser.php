@@ -107,7 +107,7 @@ class Wiki2LaTeXParser {
 	}
 	public function setVal($key, $value) {
 		$this->config[$key] = $value;
-		//echo "Key: ".$key."=".$value."<br/>\n";
+
 		return true;
 	}
 
@@ -157,10 +157,10 @@ class Wiki2LaTeXParser {
 		$this->regexp_replace[] = $replace;
 	}
 
-	public function recursiveTagParse( $str = '', $tables=true ) {
+	public function recursiveTagParse( $str = '' ) {
 		$fName = __METHOD__;
 		$this->profileIn($fName);
-		$str = $this->internalParse($str, $tables);
+		$str = $this->internalParse($str);
 		$this->profileOut($fName);
 		return $str;
 	}
@@ -213,6 +213,7 @@ class Wiki2LaTeXParser {
 		wfRunHooks("w2lBeforeInternalParse", array( &$this, &$text ) );
 		
 		$text = $this->internalParse($text);
+
 		$text = trim($text);
 		// Some tidying
 		$text = str_replace("\n\n\n", "\n\n", $text);
@@ -226,7 +227,6 @@ class Wiki2LaTeXParser {
 		//$text = $this->replacePre($text);
 		$text = trim($text);
 		$text = str_replace("\n\n\n", "\n\n", $text);
-
 		wfRunHooks("w2lFinish", array( &$this, &$text ) );
 
 		$time_end = microtime(true);
@@ -286,11 +286,11 @@ class Wiki2LaTeXParser {
 		return $str;
 	}
 
-	function internalParse($str, $tables = true) {
+	function internalParse($str) {
 		$this->profileIn(__METHOD__);
 
 		// Used for parsing the string as is, without comments, extension-tags, etc.
-		//echo "eins",$str;
+
 		//$str = $this->doSimpleReplace($str);
 		
 		$str = $this->doInternalLinks($str);
@@ -301,12 +301,9 @@ class Wiki2LaTeXParser {
 		// Now we can begin parsing. We parse as close as possible the way mediawiki parses a string.
 		// So, start with tables
 		
-		if (true == $tables) {
+		wfRunHooks('w2lBeforeTables', array( &$this, &$str ) );
+		$str = $this->doTableStuff($str);
 
-			wfRunHooks('w2lBeforeTables', array( &$this, &$str ) );
-			$str = $this->doTableStuff($str);
-		}
-		//echo "zwei",$str;
 		// Next come these Blocklevel elments
 		// Now go on with headings
 
@@ -539,7 +536,7 @@ class Wiki2LaTeXParser {
 		}
 
 		//$this->preLineReplace = ();
-		//echo $debug, ' Blocks: ', $block_counter, print_r($preBlock), print_r($rplBlock);
+
 		$this->profileOut($fName);
 		return $str;
 	}
@@ -841,7 +838,7 @@ class Wiki2LaTeXParser {
 	private function processHeadings($matches) {
 		$heading = trim($matches[2]);
 		$level = trim($matches[1]);
-		//echo $level;
+
 		if ( in_array( $this->getVal("documentclass"), array('report' ,'book'))) {
 			--$level;
 		}
@@ -1057,10 +1054,9 @@ class Wiki2LaTeXParser {
 		$matches = array();
 		$unique  = 'W2l-'.$this->uniqueString();
 		//$unique .=
-		//echo
+
 		$str = $this->extractTagsAndParams($this->elements, $str, $matches, $unique);
-		//var_dump($matches); var_dump($string);
-		//echo $string;
+
 		// second: Some other aspects...
 		// Now call all the registered Callback-function with their contents.
 		foreach($matches as $key=>$match) {
@@ -1327,12 +1323,15 @@ class Wiki2LaTeXParser {
 	private function doTableStuff( $str ) {
 		$this->profileIn(__METHOD__);
 		
-		$correct = array("\n\{|" => "\n{|", "|\}\n"=> "|}\n");
-		$str = str_replace(array_keys($correct), array_values($correct), $str);
+		if ( preg_match('/\\{\|/', $str) ) {
+			$correct = array("\n\{|" => "\n{|", "|\}\n"=> "|}\n");
+			$str = str_replace(array_keys($correct), array_values($correct), $str);
 		
-		wfRunHooks("w2lTables", array( &$this, &$str ) );
+			wfRunHooks("w2lTables", array( &$this, &$str ) );
 
-		$str = $this->externalTableHelper($str);
+			$str = $this->externalTableHelper($str);
+		}
+
 		$this->profileOut(__METHOD__);
 		return $str;
 	}
@@ -1406,10 +1405,15 @@ class Wiki2LaTeXParser {
 		$firstCellOfRow = true;
 		$ltx_caption = '';
 		$in_table = 0;
+
 		foreach ( $t AS $k => $x )
 		{
 			$x = trim ( $x ) ;
+			if ( $x == '' ) { // empty line, go to next line
+				continue;
+			}
 			$fc = substr ( $x , 0 , 1 ) ;
+			//$matches = array();
 			if ( preg_match( '/^(:*)\{\|(.*)$/', $x, $matches ) ) {
 				//Start of table: Extract LaTeX tips from attributes, make header.
 				$attributes = $this->unstripForHTML( $matches[2] );
@@ -1434,12 +1438,12 @@ class Wiki2LaTeXParser {
 					$latexwidth = $latexwidth_a[1];
 					$latexwidth = str_replace('\(\backslash{}\)', '\\', $latexwidth);
 				}
-				//var_dump($latexwidth);
+
 				
 				$latexformat = $latexformat[1];
 				$latexformat = str_replace("\\", "", $latexformat);*/
 
-				if( $in_table == 0 ) { /* new top-level table, initialise arrays */
+				if ( $in_table == 0 ) { /* new top-level table, initialise arrays */
 					$latexformat = '';
 					$cellcount_max = array();
 					$cellcount_current = array();
@@ -1498,7 +1502,7 @@ class Wiki2LaTeXParser {
 			else if ( '|-' == substr ( $x , 0 , 2 ) ) { # Allows for |---------------
 				if (strpos($x, '----') == 1) {
 					$add_hline = '\hline';
-					//echo 'yes!';
+
 				} else {
 					$add_hline = '';
 				}
@@ -1527,6 +1531,7 @@ class Wiki2LaTeXParser {
 				//$cellcounter[] = 0;
 			}
 			else if ( '|' == $fc || '!' == $fc || '|+' == substr ( $x , 0 , 2 ) ) { # Caption
+
 				# $x is a table row
 				if ( '|+' == substr ( $x , 0 , 2 ) ) {
 					$fc = '+' ;
@@ -1534,17 +1539,17 @@ class Wiki2LaTeXParser {
 				}
 				$after = substr ( $x , 1 ) ;
 				if ( $fc == '!' ) $after = str_replace ( '!!' , '||' , $after ) ;
-
+				
 				// Split up multiple cells on the same line.
 				// FIXME: This can result in improper nesting of tags processed
 				// by earlier parser steps, but should avoid splitting up eg
 				// attribute values containing literal "||".
-				//var_dump($after);
-				$after = wfExplodeMarkup( '||', $after );
-				//var_dump($after);
+
+				$cells = StringUtils::explodeMarkup( '||', $after );
+
 				$t[$k] = '' ;
 				# Loop through each table cell
-				foreach ( $after AS $theline )
+				foreach ( $cells AS $theline )
 				{
 					$z = '' ;
 					if ( $fc != '+' )
@@ -1560,7 +1565,7 @@ class Wiki2LaTeXParser {
 
 						array_pop ( $has_opened_tr );
 						array_push ( $has_opened_tr , true ) ;
-						//var_dump($ltr);
+
 					}
 
 					$l = array_pop ( $ltd ) ;
@@ -1607,7 +1612,7 @@ class Wiki2LaTeXParser {
 				}
 			}
 		}
-		//var_dump($t);
+
 		$t = implode ( "\n" , $t ) ;
 		# special case: don't return empty table
 		//if(!$anyCells) $t = '';
@@ -1832,7 +1837,7 @@ class Wiki2LaTeXParser {
 		$marker = $this->getMark('pipe');// $this->uniqueString();
 		//$str = preg_replace('/\[\[(.*)\|(.*)\]\]/U', '[[$1'.$marker.'$2]]', $str);
 		$test = $this->split_str($str);
-		//var_dump($test);
+
 		foreach($test as $part) {
 			// if first
 			if (substr($part, 0,2 ) == '{{' ) {
@@ -1865,7 +1870,7 @@ class Wiki2LaTeXParser {
 		$args = array();
 		//$match = strtr($match, array("\n"=>""));
 		$match = trim($match);
-		//echo $match;
+
 
 		// new
 		if ( substr_count($match, '|') !== 0 ) {
@@ -1924,7 +1929,6 @@ class Wiki2LaTeXParser {
 				}
 				$title = substr($identifier, 1);
 				$args = $this->processArgString($args);
-				//echo $title;
 				$tmp = $this->getContentByTitle($title);
 				$tmp = $this->preprocessString($tmp);
 				$tmp = $this->processTemplateVariables($tmp, $args);
@@ -1962,8 +1966,8 @@ class Wiki2LaTeXParser {
 				$args[$current_arg] = $keyvaluepair;
 			}
 		}
-		//echo $args;
-		//var_dump($args);
+
+
 		return $args;
 	}
 
@@ -1979,13 +1983,12 @@ class Wiki2LaTeXParser {
 	}
 	private function doTemplateVariables($match) {
 		// replace the content by the args...
-		//var_dump($match);
+
 		if ( substr_count($match[1],'|') ) {
 			$with_default = explode('|', $match[1], 2);
-			//echo 'mit def-wert';
-			//var_dump($with_default);
+
 			$content = $this->templateVars[$with_default[0]];
-			//var_dump($content);
+
 			if ( empty($content) ) {
 				return $with_default[1];
 			} else {
@@ -1993,8 +1996,7 @@ class Wiki2LaTeXParser {
 			}
 		} else {
 			$content = $this->templateVars[$match[1]];
-			//echo 'kein def-wert';
-			//var_dump($content);
+
 			if ( empty($content) ) {
 				return $match[0];
 			} else {
@@ -2010,7 +2012,7 @@ class Wiki2LaTeXParser {
 		foreach($args as $value) {
 			$params[] = trim($value);
 		}
-		//echo $fnc;
+
 		if ( array_key_exists($fnc , $this->pFunctions) ) {
 			$content = call_user_func_array($this->pFunctions[$fnc], $params);
 			if ( is_array($content) ) {
@@ -2042,7 +2044,7 @@ class Wiki2LaTeXParser {
 		$in_block = false;
 
 		$tmp_char = str_split($str);
-		//var_dump($tmp_char);
+
 		foreach($tmp_char as $cur_char) {
 			//
 			//$cur_char = $str{$char_counter};
@@ -2063,7 +2065,7 @@ class Wiki2LaTeXParser {
 					--$cb_counter;
 					if ($cb_counter == 0) {
 						$split_array[$block] .= $cur_char;
-						//var_dump($split_array[$block]);
+
 						++$block;
 						$split_array[$block] = '';
 
@@ -2082,7 +2084,7 @@ class Wiki2LaTeXParser {
 			++$char_counter;
 			//if ( !isset($str{$char_counter}) ) {
 
-		//		var_dump($cur_char);
+
 		//		break;
 			//}
 		}
@@ -2092,7 +2094,7 @@ class Wiki2LaTeXParser {
 	  		$value = str_replace( $table_close_mark, "|}\n", $value);
 	  		$new_split[$key] = $value;
 		}
-		//echo strlen($str), ' ',$char_counter, "\n";
+
 		return $new_split;
 	}
 
