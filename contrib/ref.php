@@ -21,7 +21,7 @@ if ( !function_exists('w2lRef') ) {
 	function w2lRef($input, $argv, $parser, $mode = 'latex') {
 		$command = 'footnote';
 		$input   = trim($input);
-	 	$input   = $parser->recursiveTagParse($input, false);
+	 	$input   = $parser->recursiveTagParse($input);
 		wfRunHooks('w2lRefTag', array( &$parser, &$command, &$input ) );
 		return '\\'.$command.'{'.trim($input).'}';
 	}
