@@ -4,4 +4,6 @@
 ** $w2l_tags       to $w2lTags;
 ** $w2l_pFunctions to $w2lParserFunctions;
 * Added German Translation
+* Added Polish translation (thx to: Szymon Tarnowski)
 * Removed reference-support from w2lDefaultSettings.php. Reactivate it by adding include('contrib/ref.php'); to your own w2lConfig.php
+* Changed export options from radio buttons to clickable button. Removed $w2lConfig['default_action'] which is useless now.
