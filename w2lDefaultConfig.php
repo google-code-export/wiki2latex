@@ -38,7 +38,6 @@ include_once('contrib/math.php');
 include_once('contrib/pre.php');
 
 // Default Values used by form:
-$w2lConfig['default_action']   = 'w2ltextarea'; // Possible Values: w2ltextarea, w2ltexfiles, w2lpdf
 $w2lConfig['default_template'] = 'auto';
 $w2lConfig['babel_default']    = 'english'; // english, german, ngerman, french or dutch are supported...
 

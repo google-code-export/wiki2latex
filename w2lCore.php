@@ -111,10 +111,22 @@ class Wiki2LaTeXCore {
 		$output .= '<form method="post" action="'.$wgScriptPath.'/index.php">'."\n";
 		$output .= '<input type="hidden" name="title" value="'.$url_title.'" />'."\n";
 		$output .= '<input type="hidden" name="started" value="1" />'."\n";
-
-
+		
 		$fieldsets = array();
-			
+		
+
+		$export_options['legend'] = wfMsg('w2l_select_output');
+		$export_options['html'] = '<button type="submit" name="action" value="w2ltextarea">'.wfMsg('w2l_select_textarea').'</button>';
+		$export_options['html'] .= '<button type="submit" name="action" value="w2ltexfiles">'.wfMsg('w2l_select_texfiles').'</button>';
+
+		if (true == $this->config['pdfexport']) {
+			$export_options['html'] .= '<button type="submit" name="action" value="w2lpdf">';
+			$export_options['html'] .= wfMsg('w2l_select_pdf','pdf');
+			$export_options['html'] .= '</button>';
+			$sel_show_log = ( $this->config['ltx_show_log'] == true ) ? ' checked="checked"': '' ;
+			$export_options['html'] .= ' (<label><input type="checkbox" name="show_log" value="true"'.$sel_show_log.'/> '.wfMsg('w2l_show_log').'</label>) '."\n";
+		}
+
 		// Exportoptionen
 
 		$field_opt  = '';
@@ -130,7 +142,11 @@ class Wiki2LaTeXCore {
 		$field_opt .= wfMsg('w2l_select_donotprocesstemplates').'</label><br />'."\n";
 		$field_opt .= '<label><input type="radio" name="process_curly_braces" checked="checked" value="2" /> ';
 		$field_opt .= wfMsg('w2l_select_processtemplates').'</label><br />'."\n";
+		$fieldsets[100] = array('legend' => wfMsg('w2l_options'), 'html' => $field_opt );
+		// Language for Babel:
+		
 
+		
 		$babel_english = ($this->config['babel_default'] == 'english')    ? ' selected="selected"': '' ;
 		$babel_ngerman = ($this->config['babel_default'] == 'ngerman')    ? ' selected="selected"': '' ;
 		$babel_german  = ($this->config['babel_default'] == 'german')     ? ' selected="selected"': '' ;
@@ -139,18 +155,19 @@ class Wiki2LaTeXCore {
 		$babel_uk      = ($this->config['babel_default'] == 'ukrainian')  ? ' selected="selected"': '' ;
 		$babel_ru      = ($this->config['babel_default'] == 'russian')    ? ' selected="selected"': '' ;
 
-		$field_opt .= '<label>'.wfMsg('w2l_select_babel_language').': ';
-		$field_opt .= '<select name="babel">';
-		$field_opt .= '<option value="dutch"'.$babel_dutch.'>Dutch</option>';
-		$field_opt .= '<option value="english"'.$babel_english.'>English</option>';
-		$field_opt .= '<option value="french"'.$babel_french.'>French</option>';
-		$field_opt .= '<option value="german"'.$babel_german.'>German (old)</option>';
-		$field_opt .= '<option value="ngerman"'.$babel_ngerman.'>German (new)</option>';
-		$field_opt .= '<option value="ukrainian"'.$babel_uk.'>Ukrainian</option>';
-		$field_opt .= '<option value="russian"'.$babel_ru.'>Russian</option>';
-		$field_opt .= '</select></label><br/>'."\n";
-
-		$fieldsets[100] = array('legend' => wfMsg('w2l_options'), 'html' => $field_opt );
+		$field_babel = '<label>'.wfMsg('w2l_select_babel_language').': ';
+		$field_babel .= '<select name="babel">';
+		$field_babel .= '<option value="dutch"'.$babel_dutch.'>Dutch</option>';
+		$field_babel .= '<option value="english"'.$babel_english.'>English</option>';
+		$field_babel .= '<option value="french"'.$babel_french.'>French</option>';
+		$field_babel .= '<option value="german"'.$babel_german.'>German (old)</option>';
+		$field_babel .= '<option value="ngerman"'.$babel_ngerman.'>German (new)</option>';
+		$field_babel .= '<option value="russian"'.$babel_ru.'>Russian</option>';
+		$field_babel .= '<option value="ukrainian"'.$babel_uk.'>Ukrainian</option>';
+		$field_babel .= '</select></label><br/>'."\n";
+		
+		$fieldsets[200] = array('legend' => wfMsg('w2l_select_babel_language'), 'html' => $field_babel);
+		
 
 		// Fieldset für Templates:
 		$templ_field = '';
@@ -199,52 +216,25 @@ class Wiki2LaTeXCore {
 		wfRunHooks('w2lFormOptions', array( &$this, &$compat_form ));
 	
 		if ( $compat_form != '' ) {
-			$fieldsets[200] = array('legend' => $compat_legend, 'html' => $compat_form);
+			$fieldsets[400] = array('legend' => $compat_legend, 'html' => $compat_form);
 		}
 		
 		$at_form = '';
 		$at_legend = 'Magic-Template-Options';
 		wfRunHooks('w2lMagicTemplateOptions', array( &$this, &$at_form ));
 		if ( $at_form != '' ) {
-			$fieldsets[150] = array('legend' => $at_legend, 'html' => $at_form);
+			$fieldsets[500] = array('legend' => $at_legend, 'html' => $at_form);
 		}
+		$fieldsets[10] = $export_options;
+		$fieldsets[1000] = $export_options;
 		wfRunHooks('w2lFormFieldsets', array(&$this, &$fieldsets) );
-			
+		ksort($fieldsets);
 		foreach ($fieldsets as $fieldset) {
 			$output .= '<fieldset>'."\n";
 			$output .= '<legend>'.$fieldset['legend'].'</legend>'."\n";
 			$output .= $fieldset['html'];
 			$output .= '</fieldset>'."\n";
 		}     
-				
-		// Auswahl der Art des Exports...
-		$sel_textarea = ($select['action'] == 'w2ltextarea') ? ' checked="checked"': '' ;
-		$sel_tex      = ($select['action'] == 'w2ltexfiles') ? ' checked="checked"': '' ;
-		$sel_pdf      = ($select['action'] == 'w2lpdf')      ? ' checked="checked"': '' ;
-
-		$output .= '<fieldset>'."\n";
-		$output .= '<legend>';
-		$output .= wfMsg('w2l_select_output');
-		$output .= '</legend>'."\n";
-		$output .= '<label><input type="radio" name="action" value="w2ltextarea"'.$sel_textarea.' /> ';
-		$output .= wfMsg('w2l_select_textarea');
-		$output .= '</label><br />'."\n";
-		$output .= '<label><input type="radio" name="action" value="w2ltexfiles"'.$sel_tex.' /> ';
-		$output .= wfMsg('w2l_select_texfiles');
-		$output .= '</label><br />'."\n";
-
-		if (true == $this->config['pdfexport']) {
-			$output .= '<label><input type="radio" name="action" value="w2lpdf"'.$sel_pdf.' /> ';
-			$output .= wfMsg('w2l_select_pdf','pdf');
-			$output .= '</label>';
-			$sel_show_log = ( $this->config['ltx_show_log'] == true ) ? ' checked="checked"': '' ;
-			$output .= ' (<label><input type="checkbox" name="show_log" value="true"'.$sel_show_log.'/> '.wfMsg('w2l_show_log').'</label>)<br /> '."\n";
-		}
-		$output .= '</fieldset>'."\n";
-
-		$output .= '<button type="submit">';
-		$output .= wfMsg('w2l_start_export');
-		$output .= '</button>';
 
 		$output .= $this->getFolderLinks();
 		$output .= '</form>'."\n";
