@@ -929,7 +929,7 @@ class Wiki2LaTeXParser {
 			case NS_IMAGE:
 				$link = $title;
 
-				$parts = explode("|", $link);
+				$parts = explode("|", $link_int);
 				$imagename = array_shift($parts);
 				$case_imagename = $imagename;
 				// still need to remove the Namespace:
