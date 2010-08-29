@@ -17,11 +17,24 @@
 if ( !function_exists('w2lMath') ) {
 
 	$w2lTags['math'] = 'w2lMath';
+	$wgHooks['w2lBeginParse'][] = 'w2lDoDisplayMath';
 
 	function w2lMath($input, $argv, $parser, $mode = 'latex') {
-		$output  = "\n\begin{math}\n";
-		$output .= trim($input)."\n";
-		$output .= "\end{math}\n";
-		return $output;
+                if ( $argv['style'] == 'display' ) {
+                        $output  = "\n\begin{equation}\n";
+                        $output .= trim($input)."\n";
+                        $output .= "\end{equation}\n";
+                } else {
+                        $output  = "\n\begin{math}\n";
+                        $output .= trim($input)."\n";
+                        $output .= "\end{math}\n";
+                }
+
 	}
+
+	function w2lDoDisplayMath(&$parser, &$text) {
+		$text = str_replace(":<math>", "<math style=\"display\">", $text);
+		return true;
+	}
+
 }
