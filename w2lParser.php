@@ -1530,7 +1530,7 @@ class Wiki2LaTeXParser {
 				$add_hline = '';
 				//$cellcounter[] = 0;
 			}
-			else if ( '|' == $fc || '!' == $fc || '|+' == substr ( $x , 0 , 2 ) ) { # Caption
+			else if ( ('|' === $fc || '!' === $fc || '|+' === substr ( $x , 0 , 2 ) ) && $in_table != 0 ) { # Caption
 
 				# $x is a table row
 				if ( '|+' == substr ( $x , 0 , 2 ) ) {
