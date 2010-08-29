@@ -1323,14 +1323,14 @@ class Wiki2LaTeXParser {
 	private function doTableStuff( $str ) {
 		$this->profileIn(__METHOD__);
 		
-		if ( preg_match('/\\{\|/', $str) ) {
+		//if ( preg_match('/\\{\|/', $str) ) {
 			$correct = array("\n\{|" => "\n{|", "|\}\n"=> "|}\n");
 			$str = str_replace(array_keys($correct), array_values($correct), $str);
 		
 			wfRunHooks("w2lTables", array( &$this, &$str ) );
 
 			$str = $this->externalTableHelper($str);
-		}
+		//}
 
 		$this->profileOut(__METHOD__);
 		return $str;
