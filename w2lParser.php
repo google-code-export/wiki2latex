@@ -999,17 +999,97 @@ class Wiki2LaTeXParser {
 		$str = preg_replace_callback('/\[(.*?)\]/', array($this, 'externalLinkHelper'), $str);
 		
 		// Now check for plain external links:
-		$str = preg_replace_callback('@((http|https|ftp|ftps):.*?)(\ |\n)@', array($this, 'externalLinkHelper'), $str);
+		$str = $this->replaceFreeExternalLinks($str);
 		
 		$this->profileOut($fName);
 		return $str;
 	}
 	
-	
+	/**
+	 * Replace anything that looks like a URL with a link
+	 * @private
+	 */
+	function replaceFreeExternalLinks( $text ) {
+		global $wgContLang;
+		//$fname = 'Parser::replaceFreeExternalLinks';
+		//wfProfileIn( $fname );
+
+		$bits = preg_split( '/(\b(?:' . wfUrlProtocols() . '))/S', $text, -1, PREG_SPLIT_DELIM_CAPTURE );
+		$s = array_shift( $bits );
+		$i = 0;
+		//$sk = $this->mOptions->getSkin();
+
+		while ( $i < count( $bits ) ){
+			$protocol = $bits[$i++];
+			$remainder = $bits[$i++];
+			
+			$m = array();
+
+			if ( preg_match( '/^([^][<>"\\x00-\\x20\\x7F]+)(.*)$/s', $remainder, $m ) ) {
+				# Found some characters after the protocol that look promising
+				$url = $protocol . $m[1];
+				$trail = $m[2];
+				
+				# special case: handle urls as url args:
+				# http://www.example.com/foo?=http://www.example.com/bar
+				if(strlen($trail) == 0 &&
+					isset($bits[$i]) &&
+					preg_match('/^'. wfUrlProtocols() . '$/S', $bits[$i]) &&
+					preg_match( '/^([^][<>"\\x00-\\x20\\x7F]+)(.*)$/s', $bits[$i + 1], $m ))
+				{
+					# add protocol, arg
+					$url .= $bits[$i] . $m[1]; # protocol, url as arg to previous link
+					$i += 2;
+					$trail = $m[2];
+				}
+
+				# The characters '<' and '>' (which were escaped by
+				# removeHTMLtags()) should not be included in
+				# URLs, per RFC 2396.
+				$m2 = array();
+				if (preg_match('/&(lt|gt);/', $url, $m2, PREG_OFFSET_CAPTURE)) {
+					$trail = substr($url, $m2[0][1]) . $trail;
+					$url = substr($url, 0, $m2[0][1]);
+				}
+
+				# Move trailing punctuation to $trail
+				$sep = ',;\.:!?';
+				# If there is no left bracket, then consider right brackets fair game too
+				if ( strpos( $url, '(' ) === false ) {
+					$sep .= ')';
+				}
+
+				$numSepChars = strspn( strrev( $url ), $sep );
+				if ( $numSepChars ) {
+					$trail = substr( $url, -$numSepChars ) . $trail;
+					$url = substr( $url, 0, -$numSepChars );
+				}
+
+				$url = Sanitizer::cleanUrl( $url );
+
+				# Is this an external image?
+				$text = false;// $this->maybeMakeExternalImage( $url );
+				if ( $text === false ) {
+					//wfVarDump($url);
+					$text = $this->externalLinkHelper(array("[$url]", $url));
+					# Not an image, make a link
+					//$text = $sk->makeExternalLink( $url, $wgContLang->markNoConversion($url), true, 'free', $this->mTitle->getNamespace() );
+					# Register it in the output object...
+					# Replace unnecessary URL escape codes with their equivalent characters
+					//$pasteurized = Parser::replaceUnusualEscapes( $url );
+					//$this->mOutput->addExternalLink( $pasteurized );
+				}
+				$s .= $text . $trail;
+			} else {
+				$s .= $protocol . $remainder;
+			}
+		}
+		wfProfileOut( $fname );
+		return $s;
+	}
 	
 	private function externalLinkHelper($matches) {
 		$match = trim($matches[1]);
-		wfVarDump($matches);
 		// check link for ...
 		$pattern = '/(http|https|ftp|ftps):(.*?)/';
 		if ( !preg_match($pattern, $match) ) {
@@ -1025,14 +1105,11 @@ class Wiki2LaTeXParser {
 			$link = explode(' ', $match, 2); // in $link[0] ist die URL!
 			$linkCom = $this->maskURL($link[0], $link[1]);
 			// (Befehl)(Klammerauf)(Link_masked)(Klammerzu)(Klammerauf)LinkText(Klammerzu)
-
 		} else {
 			// nur URL!
 			$linkCom = $this->maskURL($match);
-
 		}
-		if ( isset($matches[2]) );
-			$linkCom .= $matches[3];
+
 		return $linkCom;
 	}
 
