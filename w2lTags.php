@@ -28,29 +28,31 @@ if ( !defined('MEDIAWIKI') )
 /* W2l-Parser-Extensions */
 
 class Wiki2LaTeXTags {
-	function Setup() {
-		global $wgParser, $w2lTags;
+	function Setup(&$parser) {
 		// Register Extension-Tags to Mediawiki...
 		
 		// LaTeX-commands, which we want to offer to a wiki-article
-		$wgParser->setHook("noindent",    array($this, "NoIndent"));
-		$wgParser->setHook("newpage",     array($this, "NewPage"));
-		$wgParser->setHook("label",       array($this, "Label"));
-		$wgParser->setHook("pageref",     array($this, "PageRef"));
-		$wgParser->setHook("chapref",     array($this, "ChapRef"));
+		$parser->setHook("noindent",    array($this, "NoIndent"));
+		$parser->setHook("newpage",     array($this, "NewPage"));
+		$parser->setHook("label",       array($this, "Label"));
+		$parser->setHook("pageref",     array($this, "PageRef"));
+		$parser->setHook("chapref",     array($this, "ChapRef"));
 		
 		// Extension-tags, which we need for w2l:
-		$wgParser->setHook("templatevar", array($this, "TemplateVar"));
-		$wgParser->setHook("latex",       array($this, "Latex"));
-		$wgParser->setHook("latexpage",   array($this, "LatexPage"));
-		$wgParser->setHook("latexfile",   array($this, "LatexFile"));
+		$parser->setHook("templatevar", array($this, "TemplateVar"));
+		$parser->setHook("latex",       array($this, "Latex"));
+		$parser->setHook("latexpage",   array($this, "LatexPage"));
+		$parser->setHook("latexfile",   array($this, "LatexFile"));
 		
 		// By this one, you can directly input latex to a wiki article. LaTeX code is not interpreted in wiki-mode, though.
-		$wgParser->setHook("rawtex",      array($this, "RawTex"));
+		$parser->setHook("rawtex",      array($this, "RawTex"));
 
-		// Some default ones
-
-
+		return true;
+	}
+	
+	function w2lSetup(&$parser) {
+		global $w2lTags;
+		
 		$w2lTags['rawtex'] = array($this, 'rawtex');
 		
 		// Some Extensions, which return LaTeX-commands

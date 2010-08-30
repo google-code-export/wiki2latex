@@ -49,13 +49,17 @@ $wgAutoloadClasses['Wiki2LaTeXCore']     = dirname(__FILE__) . '/w2lCore.php';
 $wgAutoloadClasses['Wiki2LaTeXCompiler'] = dirname(__FILE__) . '/w2lLaTeXCompiler.php';
 
 $wgHooks['SkinTemplateContentActions'][] = array(&$w2lHelper);
-$wgHooks['SkinTemplateNavigation'][] = array(&$w2lHelper);
-$wgHooks['UnknownAction'][]              = array($w2lHelper);
+$wgHooks['SkinTemplateNavigation'][]     = array(&$w2lHelper);
+$wgHooks['UnknownAction'][]              = array(&$w2lHelper);
 $wgHooks['BeforePageDisplay'][]          = array(&$w2lHelper);
+$wgHooks['ParserFirstCallInit'][]        = array(&$w2lExtensionTags, 'Setup');
+
+// Internal usage of hooks
+$wgHooks['w2lInitParser'][] =  array(&$w2lExtensionTags, 'w2lSetup'); //"Wiki2LaTeXTags::w2lSetup"
 
 $wgExtensionMessagesFiles['wiki2latex']  = dirname( __FILE__ ) . '/w2lMessages.php';
 
 $wgExtensionFunctions[] = array(&$w2lHelper, 'Setup');
-$wgExtensionFunctions[] = array(&$w2lExtensionTags, 'Setup');
+
 
 

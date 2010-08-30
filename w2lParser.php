@@ -398,6 +398,8 @@ class Wiki2LaTeXParser {
 			return;
 		}
 		
+		wfRunHooks('w2lInitParser', array(&$this));
+		
 		$this->unique = $this->uniqueString();
 		
 		foreach($w2lTags as $key => $value) {
