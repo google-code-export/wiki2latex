@@ -18,7 +18,7 @@ if ( !function_exists('w2lSource') ) {
 
 	$w2lTags['source'] = 'w2lSource';
 
-	function w2lSource($input, $argv, $parser, $frame, $mode = 'latex') {
+	function w2lSource($input, $argv, $parser, $frame = false, $mode = 'latex') {
 		$parser->addPackageDependency('listings');
 
 		$language = $argv['lang'];

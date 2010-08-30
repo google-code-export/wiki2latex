@@ -19,7 +19,7 @@ if ( !function_exists('w2lMath') ) {
 	$w2lTags['math'] = 'w2lMath';
 	$wgHooks['w2lBeginParse'][] = 'w2lDoDisplayMath';
 
-	function w2lMath($input, $argv, $parser, $frame, $mode = 'latex') {
+	function w2lMath($input, $argv, $parser, $frame = false, $mode = 'latex') {
                 if ( $argv['style'] == 'display' ) {
                         $output  = "\n\begin{equation}\n";
                         $output .= trim($input)."\n";
