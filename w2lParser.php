@@ -1010,7 +1010,7 @@ class Wiki2LaTeXParser {
 	 * @private
 	 */
 	function replaceFreeExternalLinks( $text ) {
-		global $wgContLang;
+		//global $wgContLang;
 		//$fname = 'Parser::replaceFreeExternalLinks';
 		//wfProfileIn( $fname );
 
@@ -1070,7 +1070,7 @@ class Wiki2LaTeXParser {
 				# Is this an external image?
 				$text = false;// $this->maybeMakeExternalImage( $url );
 				if ( $text === false ) {
-					//wfVarDump($url);
+
 					$text = $this->externalLinkHelper(array("[$url]", $url));
 					# Not an image, make a link
 					//$text = $sk->makeExternalLink( $url, $wgContLang->markNoConversion($url), true, 'free', $this->mTitle->getNamespace() );
@@ -1084,7 +1084,7 @@ class Wiki2LaTeXParser {
 				$s .= $protocol . $remainder;
 			}
 		}
-		wfProfileOut( $fname );
+		//wfProfileOut( $fname );
 		return $s;
 	}
 	
