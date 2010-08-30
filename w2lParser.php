@@ -997,13 +997,19 @@ class Wiki2LaTeXParser {
 		$this->profileIn($fName);
 		// Match everything within [...]
 		$str = preg_replace_callback('/\[(.*?)\]/', array($this, 'externalLinkHelper'), $str);
+		
+		// Now check for plain external links:
+		$str = preg_replace_callback('@((http|https|ftp|ftps):.*?)(\ |\n)@', array($this, 'externalLinkHelper'), $str);
+		
 		$this->profileOut($fName);
 		return $str;
 	}
 	
+	
+	
 	private function externalLinkHelper($matches) {
 		$match = trim($matches[1]);
-		
+		wfVarDump($matches);
 		// check link for ...
 		$pattern = '/(http|https|ftp|ftps):(.*?)/';
 		if ( !preg_match($pattern, $match) ) {
@@ -1019,12 +1025,15 @@ class Wiki2LaTeXParser {
 			$link = explode(' ', $match, 2); // in $link[0] ist die URL!
 			$linkCom = $this->maskURL($link[0], $link[1]);
 			// (Befehl)(Klammerauf)(Link_masked)(Klammerzu)(Klammerauf)LinkText(Klammerzu)
-			return $linkCom;
+
 		} else {
 			// nur URL!
 			$linkCom = $this->maskURL($match);
-			return $linkCom;
+
 		}
+		if ( isset($matches[2]) );
+			$linkCom .= $matches[3];
+		return $linkCom;
 	}
 
 	function maskURL($url, $text = '') {
