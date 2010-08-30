@@ -68,13 +68,13 @@ class Wiki2LaTeXTags {
 		return true;
 	}
 
-	function Latex($input, $argv, $parser, $mode = 'wiki') {
+	function Latex($input, $argv, $parser, $frame, $mode = 'wiki') {
 		$output = '<pre style="overflow:auto;">'.trim($input)."</pre>";
 
 		return $output;
 	}
 
-	function LatexPage($input, $argv, $parser, $mode = 'wiki') {
+	function LatexPage($input, $argv, $parser, $frame, $mode = 'wiki') {
 
 		switch ($mode) {
 			case 'wiki':
@@ -90,20 +90,20 @@ class Wiki2LaTeXTags {
 		return $output;
 	}
 
-	function LatexFile($input, $argv, $parser, $mode = 'wiki') {
+	function LatexFile($input, $argv, $parser, $frame, $mode = 'wiki') {
 		$output  = '<strong>Dateiname:</strong> '.$argv['name'].'.tex';
 		$output .= '<pre style="overflow:auto;">'.trim($input)."</pre>";
 
 		return $output;
 	}
 
-	function TemplateVar($input, $argv, $parser, $mode = 'wiki') {
+	function TemplateVar($input, $argv, $parser, $frame, $mode = 'wiki') {
 		$output = "<p><strong>".$argv['vname']."</strong>: ".$input."</p>";
 		return $output;
 	}
 
 	// Latex-commands for Mediawiki
-	function NoIndent($input, $argv, $parser, $mode = 'wiki') {
+	function NoIndent($input, $argv, $parser, $frame, $mode = 'wiki') {
 		switch($mode) {
 			case 'latex':
 				return '{\noindent}';
@@ -112,7 +112,7 @@ class Wiki2LaTeXTags {
 		}
 	}
 
-	function NewPage($input, $argv, $parser, $mode = 'wiki') {
+	function NewPage($input, $argv, $parser, $frame, $mode = 'wiki') {
 		switch($mode) {
 			case 'latex':
 				return '\clearpage{}';
@@ -121,7 +121,7 @@ class Wiki2LaTeXTags {
 		}
 	}
 
-	function Label($input, $argv, $parser, $mode = 'wiki') {
+	function Label($input, $argv, $parser, $frame, $mode = 'wiki') {
 		switch($mode) {
 			case 'latex':
 				$output = '\label{'.$input.'}';
@@ -133,7 +133,7 @@ class Wiki2LaTeXTags {
 		return $output;
 	}
 
-	function PageRef($input, $argv, $parser, $mode = 'wiki') {
+	function PageRef($input, $argv, $parser, $frame, $mode = 'wiki') {
 		switch($mode) {
 			case 'latex':
 				$output = '\page{'.$input.'}';
@@ -145,7 +145,7 @@ class Wiki2LaTeXTags {
 		return $output;
 	}
 
-	function ChapRef($input, $argv, $parser, $mode = 'wiki') {
+	function ChapRef($input, $argv, $parser, $frame, $mode = 'wiki') {
 		switch($mode) {
 			case 'latex':
 				$output = '\ref{'.$input.'}';
@@ -157,10 +157,12 @@ class Wiki2LaTeXTags {
 		return $output;
 	}
 
-	function Rawtex($input, $argv, $parser, $mode = 'wiki') {
-		global $w2l_config;
+	function rawtex($input, $argv, $parser, $frame, $mode = 'wiki') {
+		//global $w2l_config;
+
 		switch ($mode) {
-			case 'latex': $output = $input;
+			case 'latex': 
+				$output = $input;
 			break;
 			case 'wiki':
 				$input  = trim($input);
@@ -172,7 +174,7 @@ class Wiki2LaTeXTags {
 		return $output;
 	}
 
-	function EmptyTag($input, $argv, $parser, $mode = 'wiki') {
+	function EmptyTag($input, $argv, $parser, $frame, $mode = 'wiki') {
 		if ( $mode == 'latex' ) {
 			return '';
 		} else {

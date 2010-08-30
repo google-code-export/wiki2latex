@@ -1059,12 +1059,13 @@ class Wiki2LaTeXParser {
 
 		// second: Some other aspects...
 		// Now call all the registered Callback-function with their contents.
-		foreach($matches as $key=>$match) {
+		foreach($matches as $key => $match) {
 			$input = $match[1];
 			$tag = $match[0];
 			$argv = array();
 			$argv = $match[2];
-			$rpl = call_user_func($this->tags[$tag], $input, $argv, $this, 'latex');
+			// Submitting false as $frame for now :(
+			$rpl = call_user_func($this->tags[$tag], $input, $argv, $this, false, 'latex');
 			$this->tag_replace["$key"] = $rpl;
 		}
 		$this->profileOut($fName);

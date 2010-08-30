@@ -18,7 +18,7 @@ if ( !function_exists('w2lPre') ) {
 
 	$w2lTags['pre'] = 'w2lPre';
 
-	function w2lPre($input, $argv, $parser, $mode = 'wiki') {
+	function w2lPre($input, $argv, $parser, $frame, $mode = 'wiki') {
 		//$input = $parser->recursiveTagParse($input);
 		$output  = "\n\begin{verbatim}\n";
 		$output .= trim($input)."\n";

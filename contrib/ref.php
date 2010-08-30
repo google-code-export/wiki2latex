@@ -18,7 +18,7 @@ if ( !function_exists('w2lRef') ) {
 
 	$w2lTags['ref'] = 'w2lRef';
 
-	function w2lRef($input, $argv, $parser, $mode = 'latex') {
+	function w2lRef($input, $argv, $parser, $frame, $mode = 'latex') {
 		$command = 'footnote';
 		$input   = trim($input);
 	 	$input   = $parser->recursiveTagParse($input);
@@ -31,7 +31,7 @@ if ( !function_exists('w2lReferences') ) {
 
 	$w2lTags['references']  = 'w2lReferences';
 
-	function w2lReferences($input, $argv, $parser, $mode = 'latex') {
+	function w2lReferences($input, $argv, $parser, $frame, $mode = 'latex') {
 		$output = '';
 		wfRunHooks('w2lReferencesTag', array(&$parser, &$input, &$output, &$argv));
 		return $output;
