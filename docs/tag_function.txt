@@ -23,7 +23,7 @@ if (!function_exists(example_w2l_tag) {
 
 
 
-	function example_w2l_tag($input, $argv, $parser, $frame, $mode = 'wiki') {
+	function example_w2l_tag($input, $argv, $parser, $frame = false, $mode = 'wiki') {
 		switch($mode) {
 			case 'latex':
 				return 'This is an example output seen in \LaTeX.';

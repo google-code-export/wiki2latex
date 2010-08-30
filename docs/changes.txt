@@ -3,11 +3,12 @@
 ** $w2l_config     to $w2lConfig;
 ** $w2l_tags       to $w2lTags;
 ** $w2l_pFunctions to $w2lParserFunctions;
-* Removed reference-support from w2lDefaultSettings.php. Reactivate it by adding include('contrib/ref.php'); to your own w2lConfig.php
-* Changed export options from radio buttons to clickable button. Removed $w2lConfig['default_action'] which is useless now.
+* Removed reference-support from w2lDefaultConfig.php. Reactivate it by adding include('contrib/ref.php'); to your own w2lConfig.php
+* Changed export options from radio buttons to clickable buttons. Removed $w2lConfig['default_action'] which is useless now.
 * Fixed an imageparsing bug
 * Fixed a bug, which accidentally triggered table parsing where no table is.
-* Added indented <math> support: ":<math>..." now becomes "\begin{equation}..." (Thx to cjiahao)
+* Added indented <math> support: ":<math>..." now becomes "\begin{equation}..." (thx to cjiahao)
 * Added German Translation
 * Added Polish translation (thx to: Szymon Tarnowski)
-* Added $frame to tag-definitions (which is submitted by MW 1.16). Has no meaning at this point in W2L. 
+* Added $frame to tag-definitions (which is submitted by MW 1.16). Has no meaning at this point in W2L. This change (should not but) might break any tag extension. In case of errors please check, if the function definition matches the one given in the docs.
+* W2L now parses plain links in an article.

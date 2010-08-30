@@ -91,7 +91,6 @@ class Wiki2LaTeXCore {
 		if ( isset($this->config['defaults']) ) {
 			foreach ($this->config['defaults'] as $def_line) {
 				if ( preg_match('/'.preg_quote($def_line['search']).'/', $title) ) {
-					$select['action'] = $def_line['action'];
 					$select['template'] = $def_line['template'];
 				}
 			}
@@ -99,22 +98,17 @@ class Wiki2LaTeXCore {
 		
 		$output = '';
 
-		// Show a message, if form os called by a redirect from deleting all temp-files
+		// Show a message, if form is called by a redirect from deleting all temp-files
 		if ( $msg_add != '' ) {
 			$output .= $msg_add;
 		} 
 
-		if ( array_key_exists( 'enable_archive', $this->config) ) {
-			$output .= wfMsg( 'w2l_warning_archive_activated', $this->getF('archive', 'url-rel') );
-		}
-		
 		$output .= '<form method="post" action="'.$wgScriptPath.'/index.php">'."\n";
 		$output .= '<input type="hidden" name="title" value="'.$url_title.'" />'."\n";
 		$output .= '<input type="hidden" name="started" value="1" />'."\n";
 		
 		$fieldsets = array();
 		
-
 		$export_options['legend'] = wfMsg('w2l_select_output');
 		$export_options['html'] = '<button type="submit" name="action" value="w2ltextarea">'.wfMsg('w2l_select_textarea').'</button>';
 		$export_options['html'] .= '<button type="submit" name="action" value="w2ltexfiles">'.wfMsg('w2l_select_texfiles').'</button>';
@@ -175,10 +169,10 @@ class Wiki2LaTeXCore {
 		$templ_field .= '<label>';
 		$templ_field .= wfMsg('w2l_select_template');
 		$templ_field .= ' <select name="template">'."\n";
-		if ($select['template'] == 'auto') {
-			$templ_field .= '<option value="auto" selected="selected">(Magic)</option>';
+		if ($select['template'] == ('auto' || 'magic') ) {
+			$templ_field .= '<option value="auto" selected="selected">(Magic)</option>'."\n";
 		} else {
-			$templ_field .= '<option value="auto">(Magic)</option>';
+			$templ_field .= '<option value="auto">(Magic)</option>'."\n";
 		}
 
 		// Auswahl des Templates...
