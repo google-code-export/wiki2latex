@@ -1098,10 +1098,12 @@ class Wiki2LaTeXParser {
 			return "[".$match."]";
 		}
 		
-		$hr_options = '';
+		$hr_options = 'pdfborder={0 0 0}, breaklinks=true, pdftex=true';
 		wfRunHooks('w2lNeedHyperref', array(&$this, &$hr_options) );
 		
 		$this->addPackageDependency('hyperref', $hr_options);
+		//$this->addPackageDependency('breakurl');
+		
 		if ( strstr($match, ' ') !== false ) {
 			// mit Text!
 			$link = explode(' ', $match, 2); // in $link[0] ist die URL!
