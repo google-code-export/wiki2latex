@@ -93,11 +93,14 @@ class Wiki2LaTeXCompiler {
 		$go  = true;
 		$i   = 1;
 		$msg  = $this->msg;
-
+		
 		$msg .= wfMsg('w2l_compile_command', $command )."\n";
 		$msg .= wfMsg('w2l_temppath', $this->path )."\n";
-		$msg .= wfShellExec("whoami");
-
+		
+		if ( $this->debug == true ) {
+			$msg .= "User: ".wfShellExec("whoami");
+		}
+		
 		while ( (true == $go ) OR ( $i > 5 ) ) {
 			$msg .= "\n".wfMsg('w2l_compile_run', $i)."\n";
 
