@@ -176,7 +176,7 @@ class Wiki2LaTeXCore {
 		}
 
 		if ($select['template'] == 'empty' ) {
-			$templ_field .= '<option value="empty" selected="selected">(Magic)</option>'."\n";
+			$templ_field .= '<option value="empty" selected="selected">(Empty)</option>'."\n";
 		} else {
 			$templ_field .= '<option value="empty">(Empty)</option>'."\n";
 		}
@@ -187,6 +187,7 @@ class Wiki2LaTeXCore {
 		} else {
 			$LaTeX_namespace = array_search('LaTeX', $wgExtraNamespaces);
 		}
+		
 		if ( $LaTeX_namespace !== false ) {
 			$tables = 'page';
 			$vars   = array('page_title', 'page_id');
