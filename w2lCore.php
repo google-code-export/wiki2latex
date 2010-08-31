@@ -85,7 +85,6 @@ class Wiki2LaTeXCore {
 		$url_title = $this->mTitle->getPrefixedDBkey();
 		$namespace = $this->mTitle->getNamespace();
 
-		$select['action']   = $this->config['default_action'];
 		$select['template'] = $this->config['default_template'];
 
 		if ( isset($this->config['defaults']) ) {
@@ -449,6 +448,8 @@ class Wiki2LaTeXCore {
 		$babel    = $this->Parser->getVal('babel');
 		$code     = $this->Parser->getLatexHeadCode();
 		$docClass = $this->Parser->getVal('documentclass');
+		$docClassOptions = 'a4paper,12pt';
+		wfRunHooks('w2lMagicTemplateCreate', array(&$this, &$docClassOptions) );
 		// Magic Template will be in $tmpl;
 		include( $this->config['magic_template'] );
 		$tmpl = str_replace('((W2L_REQUIRED_PACKAGES))', $packages, $tmpl);
@@ -729,6 +730,14 @@ class Wiki2LaTeXCore {
 
 	public function getTitle() {
 		return $this->mTitle->getEscapedText();
+	}
+	
+	public function getVal($key) {
+		if ( array_key_exists($key, $this->options) ) {
+			return $this->options[$key];
+		} else {
+			return W2L_UNDEFINED;
+		}
 	}
 
 }

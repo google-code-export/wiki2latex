@@ -21,7 +21,7 @@ $wgHooks['w2lFormOptions'][]     = 'w2lKomascriptForm';
 $wgHooks['w2lFinish'][]          = 'w2lKomascriptHook';
 $wgHooks['w2lRegisterOptions'][] = 'w2lKomascript';
 $wgHooks['w2lHeadings'][]        = 'w2lKomascriptHeadings';
-
+$wgHooks['w2lMagicTemplateCreate'][] = 'w2lKomascriptMagicTemplate';
 
 function w2lKomascript(&$core) {
 	$core->addParserParameter('use_komascript');
@@ -68,4 +68,10 @@ function w2lKomascriptHeadings( &$parser, &$heading, &$level, &$heading_command)
 	return true;
 }
 
+function w2lKomascriptMagicTemplate( &$core, &$docClassOption) {
+	if ( $core->Parser->getVal('use_komascript') ) {
+		$docClassOption = 'paper=a4,fontsize=12pt';
+	}
+	return true;
+}
 

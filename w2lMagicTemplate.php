@@ -24,7 +24,7 @@ if ( !defined('MEDIAWIKI') ) {
 $tmpl = <<<EOF
 ==Wiki2LaTeX's Magic Template==
 <latexfile name="Main">
-\documentclass[a4paper,12pt]{{$docClass}}
+\documentclass[{$docClassOptions}]{{$docClass}}
 \usepackage[{$babel}]{babel} % Quotes won't work without babel
 \usepackage[utf8]{inputenc}  % This is very important!
 \usepackage[T1]{fontenc}
