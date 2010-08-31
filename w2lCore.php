@@ -175,6 +175,12 @@ class Wiki2LaTeXCore {
 			$templ_field .= '<option value="auto">(Magic)</option>'."\n";
 		}
 
+		if ($select['template'] == 'empty' ) {
+			$templ_field .= '<option value="empty" selected="selected">(Magic)</option>'."\n";
+		} else {
+			$templ_field .= '<option value="empty">(Empty)</option>'."\n";
+		}
+
 		// Auswahl des Templates...
 		if ( !is_array($wgExtraNamespaces) ) {
 			$LaTeX_namespace = false;
@@ -298,14 +304,20 @@ class Wiki2LaTeXCore {
 		if ( $temp_id == 'auto' ) {
 			// create a template automagically,
 			$template = $this->createMagicTemplate();
+		} else if ( $temp_id == 'empty' ) {
+			// Use empty for a complete page of LaTeX-Code
+			$template  = '==Wiki2LaTeX\'s Empty Template=='."\n";
+			$template .= '<latexfile name="Main">'."\n";
+			$template .= '((W2L_CONTENT))'."\n";
+			$template .= '</latexfile>';
+
 		} else {
 			$template = $this->getTemplate($temp_id);
 		}
 		$files = $this->createTemplateFiles($template);
 
-
 		// Adding some Template-Variables...
-		$template_vars['W2L_CONTENT'] =& $parsed; //new templates should use this one!
+		$template_vars['W2L_CONTENT'] =& $parsed; 
 		$template_vars['W2L_VERSION'] = $this->version;
 
 		// Now the template vars need to be put into ((var))

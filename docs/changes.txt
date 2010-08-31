@@ -12,3 +12,4 @@
 * Added Polish translation (thx to: Szymon Tarnowski)
 * Added $frame to tag-definitions (which is submitted by MW 1.16). Has no meaning at this point in W2L. This change (should not but) might break any tag extension. In case of errors please check, if the function definition matches the one given in the docs.
 * W2L now parses plain links in an article.
+* Added an empty default-template. You can use this if the page contains a complete LaTeX-document
