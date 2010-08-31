@@ -127,12 +127,14 @@ class Wiki2LaTeXCompiler {
 					$msg .= "\n";
 				}
 				*/
-
-				++$i;
-
+				
 				if ( $this->repeat == $i ) {
 					$go = false;
 				}
+				
+				++$i;
+
+
 			}
 		}
 
