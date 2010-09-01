@@ -51,7 +51,7 @@ class Wiki2LaTeXHelper {
 
 		$wgExtensionCredits['other'][] = array(
 			'name'        => wfMsg('wiki2latex'),
-			'author'      => 'Hans-Georg Kluge',
+			'author'      => 'Hans-Georg Kluge and [http://code.google.com/p/wiki2latex/wiki/HallOfFame many contributors]',
 			'description' => wfMsg('w2l_description'),
 			'url'         => 'http://www.mediawiki.org/wiki/Extension:Wiki2LaTeX',
 			'version'     => $this->version
