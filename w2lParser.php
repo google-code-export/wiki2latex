@@ -2358,6 +2358,9 @@ class Wiki2LaTeXParser {
 
 	// Wiki-Parser functions
 	function &getTitle() { return $this->mTitle; }
+	function disableCache() {
+		return true;
+	}
 	
 }
 
