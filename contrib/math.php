@@ -29,6 +29,7 @@ if ( !function_exists('w2lMath') ) {
                         $output .= trim($input)."\n";
                         $output .= "\end{math}\n";
                 }
+                return $output;
 
 	}
 

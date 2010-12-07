@@ -1098,7 +1098,7 @@ class Wiki2LaTeXParser {
 			return "[".$match."]";
 		}
 		
-		$hr_options = 'pdfborder={0 0 0}, breaklinks=true, pdftex=true';
+		$hr_options = 'pdfborder={0 0 0}, breaklinks=true, pdftex=true, raiselinks=true';
 		wfRunHooks('w2lNeedHyperref', array(&$this, &$hr_options) );
 		
 		$this->addPackageDependency('hyperref', $hr_options);

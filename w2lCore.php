@@ -122,19 +122,17 @@ class Wiki2LaTeXCore {
 
 		// Exportoptionen
 
-		$field_opt  = '';
-		$field_opt .= '<label><input type="radio" name="documentclass" id="documentclass" value="book"/> ';
-		$field_opt .= wfMsg('w2l_select_docclass_book').'</label><br/>'."\n";
-		$field_opt .= '<label><input type="radio" name="documentclass" id="documentclass" value="report" /> ';
-		$field_opt .= wfMsg('w2l_select_docclass_report').'</label><br />'."\n";
-		$field_opt .= '<label><input type="radio" name="documentclass" id="documentclass" value="article" checked="checked" /> ';
-		$field_opt .= wfMsg('w2l_select_docclass_article').'</label><br /><br />'."\n";
-		$field_opt .= '<label><input type="radio" name="process_curly_braces" value="0" /> ';
-		$field_opt .= wfMsg('w2l_select_removetemplates').'</label><br />'."\n";
-		$field_opt .= '<label><input type="radio" name="process_curly_braces" value="1" /> ';
-		$field_opt .= wfMsg('w2l_select_donotprocesstemplates').'</label><br />'."\n";
-		$field_opt .= '<label><input type="radio" name="process_curly_braces" checked="checked" value="2" /> ';
-		$field_opt .= wfMsg('w2l_select_processtemplates').'</label><br />'."\n";
+		$field_opt  = '<label>Documentclass: <select name="documentclass" id="documentclass">';
+		$field_opt .= '<option value="book">'.wfMsg('w2l_select_docclass_book').'</option>'."\n";
+		$field_opt .= '<option value="report">'.wfMsg('w2l_select_docclass_report').'</option>'."\n";
+		$field_opt .= '<option value="article" selected="selected">'.wfMsg('w2l_select_docclass_article').'</option>'."\n";
+		$field_opt .= '</select></label><br/>';
+		
+		$field_opt .= '<select name="process_curly_braces" id="process_curly_braces">';
+		$field_opt .= '<option value="0">'.wfMsg('w2l_select_removetemplates').'</option>'."\n";
+		$field_opt .= '<option value="1">'.wfMsg('w2l_select_donotprocesstemplates').'</option>'."\n";
+		$field_opt .= '<option value="2" selected="selected">'.wfMsg('w2l_select_processtemplates').'</option>'."\n";
+		$field_opt .= '</select>'."\n";
 		$fieldsets[100] = array('legend' => wfMsg('w2l_options'), 'html' => $field_opt );
 		// Language for Babel:
 		
