@@ -19,11 +19,12 @@ $wgHooks['w2lFinish'][]               = 'w2lInfoHook';
 
 function w2lInfoHook(&$parser, &$text)
 {
-    $info = "\n";
+    $info  = "\n";
     $info .= '%'."\n";
     $info .= '% Wiki2LaTeX infobox'."\n";
     $info .= '% source article: '.($parser->mTitle)."\n";
     $info .= '% generated at: '.date('H:i:s d-m-Y')."\n";
+    $info .= '% Wiki2LaTeX Version: '.W2L_VERSION."\n";
     $info .= '%'."\n";
     $info .= "\n";
 
