@@ -25,20 +25,51 @@ class Wiki2LaTeXContentCatcher {
 	
 	}
 	
-	function setContext($context) {
-	
+	function getTextByTitle( $title_str ) {
+		$title = $this->getTitleObject('text', $title_str);
+		if ( $title == '' ) {
+			return '';
+		}
+		
+		if ( $title->exists() ) {
+			$rev  = new Article( $title, 0 );
+			$text = $rev->getContent();
+		} else {
+			$text = $title_str;
+		}
+		
+		return $text;
 	}
 	
-	function setRevTime($time) {
-	
+	function getTitleObject( $type = 'text', $title_data, $namespace = NS_MAIN ) {
+		switch ($type) {
+			case 'text':
+				$title_data = trim($title_data);
+				$title = Title::newFromText( $title_data, $namespace );
+			break;
+			case 'id':
+				$title = Title::newFromID( $title_data );
+			break;
+		}
+		
+		if ( !is_a( $title, 'Title' ) ) {
+			return $title_data;
+		}
+		
+		if ( !$title->UserCanRead() ) {
+			return '';
+		}
+		return $title;
 	}
 	
-	function getByTitle($title) {
-	
-	}
-	
-	function getById($id) {
-	
+	function getTextById($id) {
+		$title = $this->getTitleObject('id', $id);
+		if ( $title == '' ) {
+			return '';
+		}
+		$rev  = new Article( $title, 0 );
+		$text  = $rev->getContent();
+		return $text;
 	}
 }
 
