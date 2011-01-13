@@ -497,7 +497,7 @@ class Wiki2LaTeXParser {
 		$preBlock = array();
 
 		foreach($work_str as $line) {
-			wfVarDump($line);
+			//wfVarDump($line);
 			// every line is here, now check for a blank at first position
 			// old code gives a notice on empty line:
 			$first_char = $this->getFirstChar($line);
@@ -509,7 +509,7 @@ class Wiki2LaTeXParser {
 
 				} else {
 					++$block_counter;
-					$preBlock[$block_counter] = "\begin{verbatim}\n";
+					$preBlock[$block_counter] = "";
 				}
 
 				$rpl_line = substr($line, 1);
@@ -526,24 +526,31 @@ class Wiki2LaTeXParser {
 				$work_line = $line."\n";
 				// check, wether last line was true, so we can create a block
 				if ($last_line == true) {
-					$preBlock[$block_counter] .= "\end{verbatim}\n";
-					//$work_line = $preBlock[$block_counter];
-					//
-					// originale Zeilen, latex-zeilen, marker,
-					//
-					$marker = $this->getMark('pre', $block_counter);
-					$work_line = $marker.$work_line;
-					//wfVarDump($str);
-					//$str = str_replace($rplBlock[$block_counter], $marker, $str);
-					//wfVarDump($str);
-					$this->preReplace[$marker] = $preBlock[$block_counter];
+					if ( trim($preBlock[$block_counter]) == "" ) {
+						$work_line = $preBlock[$block_counter].$work_line;
+					} else {
+						$preBlockX = "\begin{verbatim}\n".$preBlock[$block_counter]."\end{verbatim}\n";
+					
+						//$work_line = $preBlock[$block_counter];
+						//
+						// originale Zeilen, latex-zeilen, marker,
+						//
+					
+						//if ( $preBlock[$block_counter] ==  )
+						$marker = $this->getMark('pre', $block_counter);
+						$work_line = $marker.$work_line;
+						//wfVarDump($str);
+						//$str = str_replace($rplBlock[$block_counter], $marker, $str);
+						//wfVarDump($str);
+						$this->preReplace[$marker] = $preBlockX;
+					}
 				}
 
 				$pre_line = false;
 				$debug .= '0';
 			}
 			//$debug .= $pre_line;
-			wfVarDump($work_line);
+			//wfVarDump($work_line);
 			$final_str .= $work_line;
 		}
 		
