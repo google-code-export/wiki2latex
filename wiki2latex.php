@@ -20,7 +20,7 @@ if ( !defined('MEDIAWIKI') ) {
 	exit( 1 );
 }
 
-define('W2L_VERSION', '0.11');
+define('W2L_VERSION', 'pre0.12');
 
 $w2lConfig          = array();
 $w2lTags            = array();
