@@ -489,6 +489,7 @@ class Wiki2LaTeXParser {
 		$fName = __METHOD__;
 		$this->profileIn($fName);
 		$work_str = explode("\n", $str);
+		$final_str = '';
 		$debug = '';
 		$pre_line = false;
 		$block_counter = 0;
@@ -2196,7 +2197,7 @@ class Wiki2LaTeXParser {
 			//}
 		}
 
-		foreach($split_array as $key => $value) {
+		foreach ($split_array as $key => $value) {
 	  		$value = str_replace( $table_open_mark,"\n{|", $value);
 	  		$value = str_replace( $table_close_mark, "|}\n", $value);
 	  		$new_split[$key] = $value;
@@ -2356,7 +2357,7 @@ class Wiki2LaTeXParser {
 				$str = substr($str, ++$howmany);
 			}
 			// save it to the array
-					$result[$attr] = $attr_value;
+			$result[$attr] = $attr_value;
 			$i++;
 			}
 		return $result;
