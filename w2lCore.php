@@ -145,6 +145,7 @@ class Wiki2LaTeXCore {
 		$babel_dutch   = ($this->config['babel_default'] == 'dutch')      ? ' selected="selected"': '' ;
 		$babel_uk      = ($this->config['babel_default'] == 'ukrainian')  ? ' selected="selected"': '' ;
 		$babel_ru      = ($this->config['babel_default'] == 'russian')    ? ' selected="selected"': '' ;
+		$babel_hungarian = ($this->config['babel_default'] == 'hungarian')  ? ' selected="selected"': '' ;
 
 		$field_babel = '<label>'.wfMsg('w2l_select_babel_language').': ';
 		$field_babel .= '<select name="babel">';
@@ -153,8 +154,10 @@ class Wiki2LaTeXCore {
 		$field_babel .= '<option value="french"'.$babel_french.'>French</option>';
 		$field_babel .= '<option value="german"'.$babel_german.'>German (old)</option>';
 		$field_babel .= '<option value="ngerman"'.$babel_ngerman.'>German (new)</option>';
+		$field_babel .= '<option value="hungarian"'.$babel_uk.'>Hungarian</option>';
 		$field_babel .= '<option value="russian"'.$babel_ru.'>Russian</option>';
 		$field_babel .= '<option value="ukrainian"'.$babel_uk.'>Ukrainian</option>';
+		
 		$field_babel .= '</select></label><br/>'."\n";
 		
 		$fieldsets[200] = array('legend' => wfMsg('w2l_select_babel_language'), 'html' => $field_babel);
