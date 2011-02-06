@@ -2,7 +2,7 @@
 * Added user setting for Mathpazo (Accessible via "Wiki2LaTeX"-Tab in your Mediawiki-Settings)
 * Added a user setting to enable microtype by default
 * Added disableCache method to parser. Doesn't do anything, but is required for a more general extension support
-* Fixed a bug, which caused some xtra verbatim environments under certain circumstances.
+* Fixed a bug, which caused some extra verbatim environments under certain circumstances.
 * Avoid empty verbatim environments
 
 ==v.0.11==
