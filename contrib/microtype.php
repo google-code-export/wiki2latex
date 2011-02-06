@@ -17,6 +17,7 @@
 $wgHooks['w2lMagicTemplateOptions'][] = 'w2lMicrotypeForm';
 $wgHooks['w2lFinish'][]               = 'w2lMicrotypeHook';
 $wgHooks['w2lRegisterOptions'][]      = 'w2lMicrotype';
+$wgHooks['GetPreferences'][]    = 'w2lMicrotypePreferences';
 
 function w2lMicrotype(&$core) {
 	$core->addParserParameter('use_microtype');
@@ -31,11 +32,27 @@ function w2lMicrotypeHook( &$parser, &$text ) {
 	return true;
 }
 
-function w2lMicrotypeForm( &$core, &$output ) { 
-	$output .= '<label><input type="checkbox" name="use_microtype" value="true" /> ';
+function w2lMicrotypeForm( &$core, &$output ) {
+	global $wgUser;
+	if ( $wgUser->getOption('w2lMicrotypeDefault') == true ) {
+		$output .= '<label><input type="checkbox" name="use_microtype" value="true" checked="checked" /> ';
+	} else {
+		$output .= '<label><input type="checkbox" name="use_microtype" value="true" /> ';
+	}
 	//$output .= wfMsg('w2l_select_mathpazo').'</label><br />'."\n";
 	$output .= ' Use Microtype</label><br />'."\n";
 	return true;
 }
 
 
+function w2lMicrotypePreferences ( $user, &$preferences ) {
+	wfLoadExtensionMessages( 'wiki2latex' );
+	$preferences['w2lMicrotypeDefault'] = array(
+		'type' => 'toggle',
+		'label-message' => 'w2l-microtype-default', // a system message
+		'section' => 'wiki2latex',
+	);
+
+ 
+	return true;
+}
