@@ -78,7 +78,10 @@ $messages['en'] = array(
 	'w2l_latex_failed' => '<p>LaTeX failed to create your file. Most often this error occurs when your LaTeX-Code requests packages which are not part of your LaTeX-Distribution: <a href="$1/extensions/w2l/w2lSendFile.php?fid=$2&fmt=tex">Main.tex</a>, <a href="$1/extensions/w2l/w2lSendFile.php?fid=$2&fmt=log">Main.log</a></p>', 
 	'w2l_warning_archive_activated' => '<div style="border:1px solid black; margin:5px 10% 5px 10%;padding:5px;">You have enabled the archive-support of Wiki2LaTeX 0.7. This feature has been removed as of Version 0.8. You can still access your files <a href="$1">here</a>.</div>',
 	'w2l_temp_dir_missing' => 'Wiki2LaTeX could not create the temp-dir required in order to create the pdf. Please check that the server has all rights to access your system\'s tmp-dir.',
-	'w2l_show_log' => "show log file"
+	'w2l_show_log' => "show log file",
+	'prefs-wiki2latex' => 'Wiki2LaTeX',
+	'w2l-mathpazo-default' => 'Use Mathpazo by default',
+	'w2l-microtype-default' => 'Use Microtype by default',
 );
 $messages['de'] = array(
 	'wiki2latex'           => 'Wiki2LaTeX',
@@ -136,7 +139,8 @@ $messages['de'] = array(
 	'w2l_temp_dir_missing' => 'Wiki2LaTeX konnte kein temporäres Verzeichnis erstellen, um das PDF zu erstellen. Bitte sicherstellen, dass der Webserver auf das System-Temp-Verzeichnis zugreifen kann.',
 	'w2l_show_log' => "zeige das Log-File",
 	'prefs-wiki2latex' => 'Wiki2LaTeX',
-	'w2l-mathpazo-default' => 'Use Mathpazo by default'
+	'w2l-mathpazo-default' => 'Aktiviere Mathpazo standardmäßig',
+	'w2l-microtype-default' => 'Aktiviere Microtype standardmäßig',
 );
 $messages['uk'] = array(
 	'wiki2latex'				=> 'Wiki2LaTeX',
