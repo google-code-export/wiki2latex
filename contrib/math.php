@@ -20,16 +20,17 @@ if ( !function_exists('w2lMath') ) {
 	$wgHooks['w2lBeginParse'][] = 'w2lDoDisplayMath';
 
 	function w2lMath($input, $argv, $parser, $frame = false, $mode = 'latex') {
-                if ( $argv['style'] == 'display' ) {
-                        $output  = "\n\begin{equation}\n";
-                        $output .= trim($input)."\n";
-                        $output .= "\end{equation}\n";
-                } else {
-                        $output  = "\n\begin{math}\n";
-                        $output .= trim($input)."\n";
-                        $output .= "\end{math}\n";
-                }
-                return $output;
+	
+	if ( isset($argv['style']) && $argv['style'] == 'display' ) {
+		$output  = "\n\begin{equation}\n";
+		$output .= trim($input)."\n";
+		$output .= "\end{equation}\n";
+	} else {
+		$output  = "\n\begin{math}\n";
+		$output .= trim($input)."\n";
+		$output .= "\end{math}\n";
+	}
+	return $output;
 
 	}
 
