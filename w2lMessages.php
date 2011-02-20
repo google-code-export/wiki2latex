@@ -198,6 +198,10 @@ $messages['uk'] = array(
 	'w2l_latex_failed' => '<p>LaTeX не зміг створити файл. Найчастіше така помилка виникає коли LaTeX-Code вимагає пакунки які не є частиною LaTeX-Distribution: <a href="$1/extensions/w2l/w2lSendFile.php?fid=$2&fmt=tex">Main.tex</a>, <a href="$1/extensions/w2l/w2lSendFile.php?fid=$2&fmt=log">Main.log</a></p>', 
 		'w2l_warning_archive_activated' => '<div style="border:1px solid black; margin:5px 10% 5px 10%;padding:5px;">Увімкнено підтримку архівів у Wiki2LaTeX 0.7. Цю можливість було видалено починаючи з версії 0.8. Планується повернути її як реалізацію, що використовуватиме репозиторій файлів Mediawiki. Все ще можна отримати доступ до файлів <a href="$1">тут</a>.</div>',
 	'w2l_temp_dir_missing' => 'Wiki2LaTeX не може створити temp-директорію необхідну для створення PDF-файлу. Будьласка перевірте чи має сервер всі права на доступ до системної tmp-директорії.',
+	'prefs-wiki2latex' => 'Wiki2LaTeX',
+	'w2l-mathpazo-default' => 'Use Mathpazo by default',
+	'w2l-microtype-default' => 'Use Microtype by default',
+	'w2l_show_log' => "show log file",
 );
 	
 $messages['pl'] = array(
@@ -255,6 +259,9 @@ $messages['pl'] = array(
 	'w2l_latex_failed' => '<p>LaTeX nie mogl przetworzyc pliku. Przypuszczalnie plik TeX wymaga instalcji dodatkowych pakietow. <href="$1/extensions/w2l/w2lSendFile.php?fid=$2&fmt=tex">Main.tex</a>, <a href="$1/extensions/w2l/w2lSendFile.php?fid=$2&fmt=log">Main.log</a></p>', 
 	'w2l_warning_archive_activated' => '<div style="border:1px solid black; margin:5px 10% 5px 10%;padding:5px;">Funkcja obslugi archiwow z wersji 0.7 Wiki2LaTeX jest wlaczona. Ta funkcjonalnosc od wersji 0.8 jest inna. Mozesz skorzystac z archiwum Mediawiki. Dostep do plikow jest pod <a href="$1">linkiem</a>',
 	'w2l_temp_dir_missing' => 'Wiki2LaTeX nie moze utworzyc katalogu tymczasowego. Sprawdz uprawnienia do katalogow w serwerze.',
-	'w2l_show_log' => "show log file"
+	'w2l_show_log' => "show log file",
+	'prefs-wiki2latex' => 'Wiki2LaTeX',
+	'w2l-mathpazo-default' => 'Use Mathpazo by default',
+	'w2l-microtype-default' => 'Use Microtype by default',
 );
 
