@@ -320,7 +320,10 @@ class Wiki2LaTeXParser {
 		$str = $this->maskLaTeX($str);
 		$str = $this->doBlocklevels($str);
 		$str = $this->maskMwSpecialChars($str);
-
+		
+		$str = $this->doDivAndSpan($str, 'span');
+		$str = $this->doDivAndSpan($str, 'div');
+		
 		$str = $this->doSimpleReplace($str);
 
 
@@ -1814,13 +1817,114 @@ class Wiki2LaTeXParser {
 		);
 		wfRunHooks('w2lHTMLReplace', array(&$this, &$replacing, &$str));
 		$str = str_ireplace(array_keys($replacing), array_values($replacing), $str);
-		$str = $this->doDivAndSpan($str);
+		
 		$this->profileOut($fName);
 		return $str;
 	}
 	
-	function doDivAndSpan($str) {
+	function doDivAndSpan($str, $t = 'span') {
+		/*
+		$span_data['w2l-remove'] = array (
+			'before' => '',
+			'after'  => '',
+			'filter' => 'w2lRemove',
+			'callback' => '',
+			'string' => '',
+			'environment' => '',
+		); array($this, 'doSpanAndDivReplace')
+		*/
+
+		$this->DS_tag    = $t;
+		
+
+		//foreach ( $tag_data as $class => $values ) {
+		//	$this->DS_class = $class;
+		//	$this->DS_values = $values;
+			$str = preg_replace_callback('/(<'.$t.'(.*)>(.*)<\/'.$t.'>)/sU', array($this, 'doSpanAndDivReplace'), $str);
+		//}
+		//$str = preg_replace('/<div class="w2l-remove(.*)>(.*)<\/div>/smU','', $str);
+		//$str = strtr($str, $abbr);
+		
 		return $str;
+	}
+	
+	function doSpanAndDivReplace($matches) {
+		//$str = preg_match('/<'.$t.'(.*)class=\\\\dq\{\}(.*)'.$class.'(.*)\\\\dq\{\}(.*)>(.*)<\/'.$t.'>/sU', array($this, 'doSpanAndDivReplace'), $str);
+		$t = $this->DS_tag;
+		$tag_data = $this->getVal($t);
+		
+		
+		$full_block = trim(str_replace('\\dq{}','"', $matches[0]));
+		$attributes = trim(str_replace('\\dq{}','"', $matches[2]));
+		$content    = $matches[3];
+		
+		if ( !is_array($tag_data) ) {
+			return $content;
+		}
+		
+		foreach ($tag_data as $class => $values) {
+			$match = array();
+			if ( strpos($attributes, $class ) ) {
+				// class is in here :)
+				
+				preg_match('/<'.$t.'(.*)class="(.*)'.$class.'(.*)"(.*)>(.*)<\/'.$t.'>/sU', $full_block, $match);
+
+				//$content = $match[5];
+				
+				$other_classes = trim($match[2].' '.$match[3]);
+				$otther_attr = trim($match[1].' '.$match[4]);
+				$result = '';
+				if ( isset($values['callback']) && $values['callback'] != '' ) {
+					// Callback
+					if ( is_callable($values['callback']) ) {
+						$result = call_user_func_array($values['callback'], array(&$this, $content, $t, $other_classes, $match[0]));
+					} else {
+						return $content;
+					}
+			
+				} elseif ( isset($values['string']) ) {
+					// String
+			
+					if ( isset( $values['filter']) && is_callable($values['filter']) ) {
+						$content = call_user_func_array($values['filter'], array(&$this, $content, $t, $other_classes));
+					}
+			
+					$result = str_replace('%content%', $content, $values['string']);
+			
+				} elseif ( isset($values['environment']) && $values['environment'] != '') {
+					//environment
+					$result = '\begin{'.$values['environment'].'}';
+					if ( isset( $values['filter']) && is_callable($values['filter']) ) {
+						$result .= call_user_func_array($values['filter'], array(&$this, $content, $t, $other_classes));
+					} else {
+						$result .= $content;
+					}
+			
+					$result .= '\end{'.$values['environment'].'}';
+				} else { 
+					// before/after/filter
+					if ( isset( $values['before']) ) {
+						$result .= $values['before'];
+					}
+			
+					if ( isset( $values['filter']) && function_exists($values['filter']) ) {
+						$result .= call_user_func_array($values['filter'], array(&$this, $content, $t, $other_classes));
+					} else {
+						$result .= $content;
+					}
+			
+					if ( isset( $values['after']) ) {
+						$result .= $values['after'];
+					}
+				}
+				return $result;
+			}
+		}
+		
+		// This would be where we would find a span or div with just a style or nothing 
+		// or an unknown class; We don't transform them for now :(
+		
+		return $content;
 	}
 	
 	/* Toolkit functions */

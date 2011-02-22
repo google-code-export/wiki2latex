@@ -1,0 +1,44 @@
+/*
+Here are some thoughts on supporting div/span HTML constructs. Please bote,
+that span and div are interchangeable in this examples. They need to be declarated
+indepentently in these two arrays in your w2lCondig.php:
+
+$w2lConfig['div']['exampleclass']  = array( ... ); // for div
+$w2lConfig['span']['exampleclass'] = array( ... ); // for span
+
+Imagine this HTML/Wiki code for all the examples: 
+<div class="exampleclass"">Test</div>
+
+Please note that you can nest a span inside a div. You cannot nest a div inside a div.
+
+*/
+
+// This is an example function on how to use the span/div callback
+// 
+// Setting in w2lConfig.php:
+//$w2lConfig['div']['exampleclass'] = array('callback' => 'w2lExampleCallback');
+function w2lExampleCallback(&$parser, $content, $tag, $classes, $full_block) {
+	// This function should return the LaTeX-Code, that this class should be
+	// transformed to.
+	return strtoupper($content);
+
+}
+// Result of this example: 
+TEST
+
+
+// This is an example function offering a filter to span/div support:
+function w2lExampleFilter(&$parser, $content, $tag, $classes) {
+	// This function should return the LaTeX-Code, that this class should be
+	// transformed to.
+	return strtoupper($content);
+}
+
+/*
+Filters can be applied to all the other possibilities:
+//$w2lConfig['div']['exampleclass'] = array('string' => 'One, two three: %content% Ok, works.', 'filter' => 'w2lExampleFilter');
+//$w2lConfig['div']['exampleclass'] = array('environment' => 'examplenvironment', 'filter' => 'w2lExampleFilter');
+//$w2lConfig['div']['exampleclass'] = array('before' => 'Start: ', 'after' => ' End.', 'filter' => 'w2lExampleFilter');
+
+
+

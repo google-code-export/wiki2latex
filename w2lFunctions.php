@@ -41,3 +41,17 @@ if ( !function_exists('w2lWebsafeTitle') ) {
 	}
 }
 
+if ( !function_exists('w2lExampleFilter') ) {
+	function w2lExampleFilter(&$parser, $content, $tag, $classes) {
+		// This function should return the LaTeX-Code, that this class should be
+		// transformed to.
+		return strtoupper($content);
+	}
+}
+
+function w2lExampleCallback(&$parser, $content, $tag, $classes, $full_block) {
+	// This function should return the LaTeX-Code, that this class should be
+	// transformed to.
+	return strtoupper($content);
+
+}

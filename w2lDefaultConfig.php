@@ -58,4 +58,7 @@ $w2lConfig['auto_clear_tempfolder'] = false;
 
 $w2lConfig['magic_template'] = 'w2lMagicTemplate.php';
 
+$w2lConfig['div'] = array (  );
+
+$w2lConfig['span'] = array (  );
 

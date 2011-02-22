@@ -1,4 +1,5 @@
 ==v.0.12 (not yet released)==
+* Added div and span transformation. Works with CSS classes. Style attributes are not recognized.
 * Added user setting for Mathpazo (Accessible via "Wiki2LaTeX"-Tab in your Mediawiki-Settings)
 * Added a user setting to enable microtype by default
 * Added disableCache method to parser. Doesn't do anything, but is required for a more general extension support
