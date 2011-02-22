@@ -79,6 +79,9 @@ $messages['en'] = array(
 	'w2l_warning_archive_activated' => '<div style="border:1px solid black; margin:5px 10% 5px 10%;padding:5px;">You have enabled the archive-support of Wiki2LaTeX 0.7. This feature has been removed as of Version 0.8. You can still access your files <a href="$1">here</a>.</div>',
 	'w2l_temp_dir_missing' => 'Wiki2LaTeX could not create the temp-dir required in order to create the pdf. Please check that the server has all rights to access your system\'s tmp-dir.',
 	'w2l_show_log' => "show log file",
+	'w2l_show_parsed' => "show parsed LaTeX-Code",
+	'w2l_babel' => 'Preferred Babel Selection',
+	'w2l_use_debug' => "Use Wiki2LaTeX in debug mode",
 	'prefs-wiki2latex' => 'Wiki2LaTeX',
 	'w2l-mathpazo-default' => 'Use Mathpazo by default',
 	'w2l-microtype-default' => 'Use Microtype by default',
@@ -137,7 +140,10 @@ $messages['de'] = array(
 	'w2l_latex_failed' => '<p>LaTeX konnte die Datei nicht erstellen. Dies passiert meist wenn der LaTeX-Code nicht vorhandene LaTeX-Pakete anfordert: <a href="$1/extensions/w2l/w2lSendFile.php?fid=$2&fmt=tex">Main.tex</a>, <a href="$1/extensions/w2l/w2lSendFile.php?fid=$2&fmt=log">Main.log</a></p>', 
 	'w2l_warning_archive_activated' => '<div style="border:1px solid black; margin:5px 10% 5px 10%;padding:5px;">Die Archivfunktion von Wiki2LaTeX 0.7 ist aktiviert. Diese Funktion wurde ab Version 0.8 entfernt. <a href="$1">Die Dateien können hier noch abgerufen werden</a>.</div>',
 	'w2l_temp_dir_missing' => 'Wiki2LaTeX konnte kein temporäres Verzeichnis erstellen, um das PDF zu erstellen. Bitte sicherstellen, dass der Webserver auf das System-Temp-Verzeichnis zugreifen kann.',
-	'w2l_show_log' => "zeige das Log-File",
+	'w2l_show_log' => "Zeige das Log-File",
+	'w2l_show_parsed' => "Zeige geparsten LaTeX-Code",
+	'w2l_use_debug' => "Verwende den Debug-Modus",
+	'w2l_babel' => 'Preferred Babel Selection',
 	'prefs-wiki2latex' => 'Wiki2LaTeX',
 	'w2l-mathpazo-default' => 'Aktiviere Mathpazo standardmäßig',
 	'w2l-microtype-default' => 'Aktiviere Microtype standardmäßig',
@@ -202,6 +208,9 @@ $messages['uk'] = array(
 	'w2l-mathpazo-default' => 'Use Mathpazo by default',
 	'w2l-microtype-default' => 'Use Microtype by default',
 	'w2l_show_log' => "show log file",
+	'w2l_show_parsed' => "show parsed LaTeX-Code",
+	'w2l_use_debug' => "Use Wiki2LaTeX in debug mode",
+	'w2l_babel' => 'Preferred Babel Selection',
 );
 	
 $messages['pl'] = array(
@@ -260,8 +269,11 @@ $messages['pl'] = array(
 	'w2l_warning_archive_activated' => '<div style="border:1px solid black; margin:5px 10% 5px 10%;padding:5px;">Funkcja obslugi archiwow z wersji 0.7 Wiki2LaTeX jest wlaczona. Ta funkcjonalnosc od wersji 0.8 jest inna. Mozesz skorzystac z archiwum Mediawiki. Dostep do plikow jest pod <a href="$1">linkiem</a>',
 	'w2l_temp_dir_missing' => 'Wiki2LaTeX nie moze utworzyc katalogu tymczasowego. Sprawdz uprawnienia do katalogow w serwerze.',
 	'w2l_show_log' => "show log file",
+	'w2l_show_parsed' => "show parsed LaTeX-Code",
 	'prefs-wiki2latex' => 'Wiki2LaTeX',
 	'w2l-mathpazo-default' => 'Use Mathpazo by default',
 	'w2l-microtype-default' => 'Use Microtype by default',
+	'w2l_use_debug' => "Use Wiki2LaTeX in debug mode",
+	'w2l_babel' => 'Preferred Babel Selection',
 );
 

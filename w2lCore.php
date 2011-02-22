@@ -75,8 +75,8 @@ class Wiki2LaTeXCore {
 	
 	// These Methods to do the work we have to do
 	private function onLatexform( $msg_add = '' ) {
-		global $wgOut, $wgScriptPath, $wgExtraNamespaces;
-                
+		global $wgOut, $wgScriptPath, $wgExtraNamespaces, $wgUser, $w2lLanguages;
+
 		if ( $this->config['auto_clear_tempfolder'] == true ) {
 			$cl_temp = $this->clearTempFolder();
 		}
@@ -116,8 +116,6 @@ class Wiki2LaTeXCore {
 			$export_options['html'] .= '<button type="submit" name="action" value="w2lpdf">';
 			$export_options['html'] .= wfMsg('w2l_select_pdf','pdf');
 			$export_options['html'] .= '</button>';
-			$sel_show_log = ( $this->config['ltx_show_log'] == true ) ? ' checked="checked"': '' ;
-			$export_options['html'] .= ' (<label><input type="checkbox" name="show_log" value="true"'.$sel_show_log.'/> '.wfMsg('w2l_show_log').'</label>) '."\n";
 		}
 
 		// Exportoptionen
@@ -136,27 +134,16 @@ class Wiki2LaTeXCore {
 		$fieldsets[100] = array('legend' => wfMsg('w2l_options'), 'html' => $field_opt );
 		// Language for Babel:
 		
-
-		
-		$babel_english = ($this->config['babel_default'] == 'english')    ? ' selected="selected"': '' ;
-		$babel_ngerman = ($this->config['babel_default'] == 'ngerman')    ? ' selected="selected"': '' ;
-		$babel_german  = ($this->config['babel_default'] == 'german')     ? ' selected="selected"': '' ;
-		$babel_french  = ($this->config['babel_default'] == 'french')     ? ' selected="selected"': '' ;
-		$babel_dutch   = ($this->config['babel_default'] == 'dutch')      ? ' selected="selected"': '' ;
-		$babel_uk      = ($this->config['babel_default'] == 'ukrainian')  ? ' selected="selected"': '' ;
-		$babel_ru      = ($this->config['babel_default'] == 'russian')    ? ' selected="selected"': '' ;
-		$babel_hungarian = ($this->config['babel_default'] == 'hungarian')  ? ' selected="selected"': '' ;
-
 		$field_babel = '<label>'.wfMsg('w2l_select_babel_language').': ';
 		$field_babel .= '<select name="babel">';
-		$field_babel .= '<option value="dutch"'.$babel_dutch.'>Dutch</option>';
-		$field_babel .= '<option value="english"'.$babel_english.'>English</option>';
-		$field_babel .= '<option value="french"'.$babel_french.'>French</option>';
-		$field_babel .= '<option value="german"'.$babel_german.'>German (old)</option>';
-		$field_babel .= '<option value="ngerman"'.$babel_ngerman.'>German (new)</option>';
-		$field_babel .= '<option value="hungarian"'.$babel_uk.'>Hungarian</option>';
-		$field_babel .= '<option value="russian"'.$babel_ru.'>Russian</option>';
-		$field_babel .= '<option value="ukrainian"'.$babel_uk.'>Ukrainian</option>';
+		$babel_default = $wgUser->getOption('w2lBabelDefault');
+		foreach( $w2lLanguages as $key => $value ) {
+			$field_babel .= '<option value="'.$value.'"';
+			if ($babel_default == $value) {
+				$field_babel .= ' selected="selected"';
+			}
+			$field_babel .= '>'.$key.'</option>'."\n";
+		}
 		
 		$field_babel .= '</select></label><br/>'."\n";
 		
@@ -227,7 +214,7 @@ class Wiki2LaTeXCore {
 			$fieldsets[500] = array('legend' => $at_legend, 'html' => $at_form);
 		}
 		$fieldsets[10] = $export_options;
-		$fieldsets[1000] = $export_options;
+		$fieldsets[1000] = str_replace('checked="checked"', '',$export_options);
 		wfRunHooks('w2lFormFieldsets', array(&$this, &$fieldsets) );
 		ksort($fieldsets);
 		foreach ($fieldsets as $fieldset) {
@@ -266,6 +253,7 @@ class Wiki2LaTeXCore {
 
 		if ( $this->config['debug'] == true ) {
 			$output .= wfMsg('w2l_debug_info', round($this->Parser->getParseTime(), 3), $this->Parser->curlyBraceDebugCounter, $this->Parser->curlyBraceLength);
+			$output .= $this->Parser->getDebugMessages();
 		}
 		$wgOut->addHTML($output);
 
@@ -275,7 +263,7 @@ class Wiki2LaTeXCore {
 	}
 
 	private function onPdf($compile = true) {
-		global $wgOut, $wgLang, $IP, $wgScriptPath;
+		global $wgOut, $wgLang, $IP, $wgScriptPath, $wgUser;
 
 		if ( ($this->config['pdfexport'] == false) AND ($compile == true) ) {
 			// pdf export is not allowed, so don't export
@@ -346,16 +334,20 @@ class Wiki2LaTeXCore {
 			$compile_error = true;
 		}
 
-		if ($this->config['debug'] == true) {
+		if ( $wgUser->getOption('w2lDebug') == true) {
 			$output .= wfMsg('w2l_debug_info', $this->Parser->getParseTime(), $this->Parser->curlyBraceDebugCounter, $this->Parser->curlyBraceLength);
+			//$output .= '<pre>'.htmlspecialchars($parsed).'</pre>';
+			$output .= $this->Parser->getDebugMessages();
 		}
 		$output .= $this->getFolderLinks();
 		$wgOut->setPagetitle( wfMsg('w2l_result_title', $title) );
 		$wgOut->setSubtitle( wfMsg('w2l_result_subtitle', $title) );
+		$wgOut->addHTML( wfMsg('w2l_result_heading') );
 		if (false == $compile_error) {
 			$title_fn = w2lWebsafeTitle($title);
+			
 			$wgOut->addHTML( wfMsg('w2l_result_folder', $wgScriptPath, $title_fn, $tmpPiece) );
-			$wgOut->addHTML( wfMsg('w2l_result_heading') );
+			
 			$wgOut->addHTML($this->Parser->getErrorMessages());
 
 		} elseif ( $compile == false ) {
@@ -364,9 +356,13 @@ class Wiki2LaTeXCore {
 			$wgOut->addHTML('<p>'. wfMsg('w2l_latex_failed',$wgScriptPath, $tmpPiece). '</p>' );
 		}
 		$wgOut->addHTML( '<textarea style="height:200px">'.$compiler->getLog().'</textarea>' );
-		if ( $this->mValues->getVal('show_log') == 'true' ) {
-			$wgOut->addHTML( '<textarea style="height:200px">'.$compiler->getLogFile().'</textarea>' );
+		if ( $wgUser->getOption('w2lShowParsed') == true ) {
+			$wgOut->addHTML( '<h2>Parsed LaTeX-Code:</h2><textarea style="height:300px">'.htmlspecialchars($parsed).'</textarea>' );
 		}
+		if ( $wgUser->getOption('w2lShowLog') == true && $compile == true ) {
+			$wgOut->addHTML( '<h2>Log file:</h2><textarea style="height:200px">'.$compiler->getLogFile().'</textarea>' );
+		}
+
 		$wgOut->addHTML( $output );
 
 		return true;

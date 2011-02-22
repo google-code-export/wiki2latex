@@ -20,6 +20,18 @@ if ( !defined('MEDIAWIKI') ) {
 	exit( 1 );
 }
 
+$w2lLanguages = array(
+	'Dutch'=>'dutch',
+	'English' => 'english',
+	'French' => 'french',
+	'German' => 'german',
+	'German (new)' => 'ngerman',
+	'Hungarian'=>'hungarian',
+	'Russian'=>'russian',
+	'ukranian'=>'ukrainian',
+	'Russian'=>'russian',
+);
+
 class Wiki2LaTeXHelper {
 		
 	function __construct() {
@@ -31,12 +43,12 @@ class Wiki2LaTeXHelper {
 		$this->messagesLoaded = false;
 		$this->config  =& $w2lConfig;
 		$this->actions = array('w2llatexform', 'w2ltexfiles', 'w2lpdf', 'w2ltextarea', 'w2lcleartempfolder');
-
+		
 		return true;       
 	}
 
 	function Setup() {
-		global $wgExtensionCredits, $w2lConfig;
+		global $wgExtensionCredits, $w2lConfig, $wgUser;
 
 		// A current MW-Version is required so check for it...
 		wfUseMW($this->required_mw);
@@ -56,7 +68,7 @@ class Wiki2LaTeXHelper {
 			'version'     => $this->version
 		);
 
-		if ( $w2lConfig['debug'] == true ) {
+		if ( $wgUser->getOption('w2lDebug') == true ) {
 			error_reporting(E_ALL);
 		}
 		return true;
@@ -67,6 +79,10 @@ class Wiki2LaTeXHelper {
 		$script = <<<EOF
 <style type="text/css">/*<![CDATA[*/
 li#ca-latex {margin-left:1.6em;}
+div.w2l-debug {
+	border:1px solid black;
+	padding:1em;
+}
 /*]]>*/</style>
 EOF;
 
@@ -162,6 +178,35 @@ EOF;
 		$w2l->onUnknownAction($action, $article);
 		return false;
 
+	}
+	
+
+	function onGetPreferences ( $user, &$preferences ) {
+		global $w2lLanguages;
+		wfLoadExtensionMessages( 'wiki2latex' );
+		$preferences['w2lShowLog'] = array(
+			'type' => 'toggle',
+			'label-message' => 'w2l_show_log', // a system message
+			'section' => 'wiki2latex',
+		);
+		$preferences['w2lShowParsed'] = array(
+			'type' => 'toggle',
+			'label-message' => 'w2l_show_parsed', // a system message
+			'section' => 'wiki2latex',
+		);
+		$preferences['w2lDebug'] = array(
+			'type' => 'toggle',
+			'label-message' => 'w2l_use_debug', // a system message
+			'section' => 'wiki2latex',
+		);
+		$preferences['w2lBabelDefault'] = array(
+			'type' => 'select',
+			'label-message' => 'w2l_babel', // a system message
+			'section' => 'wiki2latex',
+			'options' => $w2lLanguages,
+			'default' => 'english',
+		);
+		return true;
 	}
 
 }

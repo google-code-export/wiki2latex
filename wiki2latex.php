@@ -52,6 +52,7 @@ $wgHooks['SkinTemplateContentActions'][] = array(&$w2lHelper);
 $wgHooks['SkinTemplateNavigation'][]     = array(&$w2lHelper);
 $wgHooks['UnknownAction'][]              = array(&$w2lHelper);
 $wgHooks['BeforePageDisplay'][]          = array(&$w2lHelper);
+$wgHooks['GetPreferences'][]             = array(&$w2lHelper);
 $wgHooks['ParserFirstCallInit'][]        = array(&$w2lExtensionTags, 'Setup');
 
 // Internal usage of hooks

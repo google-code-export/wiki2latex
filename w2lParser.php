@@ -95,6 +95,7 @@ class Wiki2LaTeXParser {
 		// For sorting and bibtex:
 		$this->run_bibtex = false;
 		$this->run_sort   = false;
+		$this->debug = array();
 	}
 
 	/* Public Functions */
@@ -2465,6 +2466,26 @@ class Wiki2LaTeXParser {
 			$i++;
 			}
 		return $result;
+	}
+	
+	function debugMessage($caller, $message) {
+		$this->debug[] = array('caller' => $caller, 'msg' => $message);
+		return true;
+	}
+	
+	function getDebugMessages() {
+		$messages = '';
+		
+		foreach ($this->debug as $msg ) {
+			$error = print_r($msg['msg'], true);
+			$messages .= '<div>'.$msg['caller'].' says: <pre>'.htmlspecialchars($error).'</pre></div>';
+		}
+		
+		if ( '' != $messages ) {
+			return '<div class="w2l-debug">'.$messages.'</div>';
+		} else {
+			return '';
+		}
 	}
 	
 	// Functions regarding sorting and Bibtex

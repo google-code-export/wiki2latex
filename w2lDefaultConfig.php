@@ -32,16 +32,12 @@ $w2lConfig['allowed_ns'] = array(NS_MAIN);
 // Is an anonymous user allowed, to view the 'LaTeX-Tab'?
 $w2lConfig['allow_anonymous'] = false;
 
-// Activate some debugging functions?
-$w2lConfig['debug'] = false;
-
 // Adding some default extension-tags:
 include_once('contrib/math.php');
 include_once('contrib/pre.php');
 
 // Default Values used by form:
 $w2lConfig['default_template'] = 'auto';
-$w2lConfig['babel_default']    = 'english'; // english, german, ngerman, french or dutch are supported...
 
 $w2lConfig['docclass'] = 'article';
 $w2lConfig['process_curly_braces'] = '2';
@@ -52,7 +48,6 @@ $w2lConfig['ltx_command'] = 'pdflatex -interaction=batchmode %file%';
 $w2lConfig['ltx_sort']    = 'makeindex %file%'; // unused
 $w2lConfig['ltx_bibtex']  = 'bibtex %file%';    // unused
 $w2lConfig['ltx_repeat']  = 3;
-$w2lConfig['ltx_show_log'] = true;
 
 $w2lConfig['auto_clear_tempfolder'] = false;
 
