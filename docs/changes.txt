@@ -1,4 +1,4 @@
-==v.0.12 (not yet released)==
+==Aegaeon: 2011-02-22==
 * Added div and span transformation. Works with CSS classes. Style attributes are not recognized. See spandiv.txt in doc folder for more information.
 * Added user setting for Mathpazo (Accessible via "Wiki2LaTeX"-Tab in your Mediawiki-Settings)
 * Added a user setting to enable microtype by default
@@ -11,6 +11,7 @@
 * Added disableCache method to parser. Doesn't do anything, but is required for a more general extension support
 * Fixed a bug, which caused some extra verbatim environments under certain circumstances.
 * Avoid empty verbatim environments
+* New versioning scheme: Each W2L version is now called after a Saturn moon and its release date.
 
 ==v.0.11==
 * Removed ((WikiContent)) in LaTeX-Templates. Replace it with: ((W2L_CONTENT))
