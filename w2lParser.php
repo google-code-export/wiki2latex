@@ -1984,6 +1984,7 @@ class Wiki2LaTeXParser {
 			"{" => "\{",
 			"}" => "\}",
 			'&' => $this->Et,
+			'^' => '\textasciicircum{}',
 		);
 		$str = strtr($str, $chars);
 		$this->profileOut($fName);
