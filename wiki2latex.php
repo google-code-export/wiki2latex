@@ -20,7 +20,13 @@ if ( !defined('MEDIAWIKI') ) {
 	exit( 1 );
 }
 
-define('W2L_VERSION', 'Aegaeon: 2011-02-22');
+define('W2L_VERSION', 'Aegir: dev');
+
+define('NS_WIKI2LATEX', 400);
+define('NS_WIKI2LATEX_TALK', 401);
+
+$wgExtraNamespaces[NS_WIKI2LATEX] = 'Wiki2LaTeX';
+$wgExtraNamespaces[NS_WIKI2LATEX_TALK] = 'Wiki2LaTeX_talk';
 
 $w2lConfig          = array();
 $w2lTags            = array();
