@@ -947,7 +947,7 @@ class Wiki2LaTeXParser {
 		switch ( $title->getNamespace() ) {
 			case NS_MEDIA:
 				// this is just a link to the mediawiki-page
-				return $link;
+				return $link_text;
 			break;
 			case NS_IMAGE:
 				$link = $title;
