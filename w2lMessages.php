@@ -85,6 +85,7 @@ $messages['en'] = array(
 	'prefs-wiki2latex' => 'Wiki2LaTeX',
 	'w2l-mathpazo-default' => 'Use Mathpazo by default',
 	'w2l-microtype-default' => 'Use Microtype by default',
+	'w2l_pdf_not_created' => 'PDF-LaTeX could not create $1.',
 );
 $messages['de'] = array(
 	'wiki2latex'           => 'Wiki2LaTeX',
@@ -147,6 +148,7 @@ $messages['de'] = array(
 	'prefs-wiki2latex' => 'Wiki2LaTeX',
 	'w2l-mathpazo-default' => 'Aktiviere Mathpazo standardmäßig',
 	'w2l-microtype-default' => 'Aktiviere Microtype standardmäßig',
+	'w2l_pdf_not_created' => 'PDF-LaTeX konnte die Datei $1 nicht erstellen',
 );
 $messages['uk'] = array(
 	'wiki2latex'				=> 'Wiki2LaTeX',

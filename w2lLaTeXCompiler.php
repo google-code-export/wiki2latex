@@ -45,19 +45,39 @@ class Wiki2LaTeXCompiler {
 	}
 	
 	function generateFiles($tpl_vars) {
-		global $wgOut;
+		global $wgOut, $wgUser;
+		
+		$this->debug = $wgUser->getOption('w2lDebug');
+		$this->is_admin = in_array('sysop', $wgUser->getGroups());
+		
 		$msg = '';
 		$tempdir  = wfTempDir();
-		$tempdir .= DIRECTORY_SEPARATOR.'w2ltmp-'.$this->piece;
+		
+		if ( $this->debug == true && $this->is_admin == true) {
+			$msg .= "System temp dir: ".$tempdir."\n";
+		}
+		
+		if ( substr($tempdir, -1) != DIRECTORY_SEPARATOR ) {
+			$tempdir .= DIRECTORY_SEPARATOR;
+		}
+		
+		$tempdir .= 'w2ltmp-'.$this->piece;
+		
+		if ( $this->debug == true && $this->is_admin == true) {
+			$msg .= "W2L temp dir: ".$tempdir."\n";
+		}
+		
 		$this->path = $tempdir;
 
 		if ( true == $this->mkdir ) {
 			if ( !@mkdir($this->path) ) {
 				$wgOut->addHTML( wfMsg('w2l_temp_dir_missing') );
+				$this->msg = $msg;
 				return false;
 			}
 			if ( !file_exists($this->path) OR !is_dir($this->path) OR !is_writable($this->path) ) {
 				$wgOut->addHTML( wfMsg('w2l_temp_dir_missing') );
+				$this->msg = $msg;
 				return false;
 			}
 			$chmod = chmod($this->path, 0777);
@@ -84,7 +104,12 @@ class Wiki2LaTeXCompiler {
 	}
 	
 	function runLaTeX( $file = 'Main', $sort = false, $bibtex = false ) {
-
+		
+		global $wgUser;
+		
+		$this->debug = $wgUser->getOption('w2lDebug');
+		$this->is_admin = in_array('sysop', $wgUser->getGroups());
+		
 		$command = str_replace('%file%', $file, $this->command);
 
 		$cur_dir = getcwd();
@@ -93,12 +118,13 @@ class Wiki2LaTeXCompiler {
 		$go  = true;
 		$i   = 1;
 		$msg  = $this->msg;
-		
-		$msg .= wfMsg('w2l_compile_command', $command )."\n";
-		$msg .= wfMsg('w2l_temppath', $this->path )."\n";
-		
-		if ( $this->debug == true ) {
-			$msg .= "User: ".wfShellExec("whoami");
+		if ( $this->debug == true && $this->is_admin == true) {
+			$msg .= "\n== Debug Information ==\n";
+			$msg .= wfMsg('w2l_compile_command', $command )."\n";
+			$msg .= wfMsg('w2l_temppath', $this->path )."\n";
+			$msg .= "Current directory: ".getcwd()."\n";
+			$msg .= "User: ".wfShellExec("whoami")."\n";
+			$msg .= "== PDF-LaTeX Information ==\n".wfShellExec("pdflatex -version");
 		}
 		
 		while ( (true == $go ) OR ( $i > 5 ) ) {
@@ -107,7 +133,7 @@ class Wiki2LaTeXCompiler {
 			$msg .= wfShellExec($command);
 
 			if ( !file_exists( $file.'.pdf' ) ) {
-				$msg .= wfMsg('w2l_pdf_not_created')."\n";
+				$msg .= wfMsg('w2l_pdf_not_created', $file.'.pdf')."\n";
 				$compile_error = true;
 				$go = false;
 			} else {
@@ -166,7 +192,7 @@ class Wiki2LaTeXCompiler {
 	
 	function doBibTex($file = 'Main') {
 		// Disabling this for now.
-		return 'unsupported';
+		return 'Bibtex is unsupported right now.';
 		
 		$command = str_replace('%file%', $file, $this->bibtex);
 		$msg  = 'Command: '.$command; 
@@ -183,6 +209,14 @@ class Wiki2LaTeXCompiler {
 	
 	function getLogFile() {
 		return $this->log;
+	}
+	
+	function getDebugInformation() {
+		$msg = '';
+		
+		$pdflatex_version = wfShellExec("pdflatex -version");
+		
+		
 	}
 }
 
