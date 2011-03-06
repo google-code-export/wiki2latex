@@ -19,6 +19,9 @@
 if ( defined('W2L_SENDFILE') ) {
 	// a small function from mediawiki needed in sendfile.php
 	function wfTempDir() {
+		if( function_exists( 'sys_get_temp_dir' ) ) {
+			return sys_get_temp_dir();
+		}
 		foreach( array( 'TMPDIR', 'TMP', 'TEMP' ) as $var ) {
 			$tmp = getenv( $var );
 			if( $tmp && file_exists( $tmp ) && is_dir( $tmp ) && is_writable( $tmp ) ) {
