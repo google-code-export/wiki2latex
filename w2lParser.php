@@ -1809,12 +1809,18 @@ class Wiki2LaTeXParser {
 			"<tt>"          => '\texttt{',
 			"</tt>"         => '}',
 			'<br/>'         => '\\\\',
+			'<br>'          => '\\\\',
+			'<br />'        => '\\\\',
 			'<small>'       => '{\small ',
 			'</small>'      => '}',
 			'<big>'         => '{\large ',
 			'</big>'        => '}',
 			'<blockquote>'  => '\begin{quotation}',
-			'</blockquote>' => '\end{quotation}'
+			'</blockquote>' => '\end{quotation}',
+			"<sup>"         => '\textsuperscript{',
+			"</sup>"        => '}',
+			"<sub>"         => '\textsubscript{',
+			"</sub>"        => '}',
 		);
 		wfRunHooks('w2lHTMLReplace', array(&$this, &$replacing, &$str));
 		$str = str_ireplace(array_keys($replacing), array_values($replacing), $str);
