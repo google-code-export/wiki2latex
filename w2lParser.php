@@ -1821,6 +1821,10 @@ class Wiki2LaTeXParser {
 			"</sup>"        => '}',
 			"<sub>"         => '\textsubscript{',
 			"</sub>"        => '}',
+			"<u>"           => '\underline{',
+			"</u>"          => '}',
+			'<code>'        => '\begin{verbatim}',
+			'</code>'       => '\end{verbatim}',
 		);
 		wfRunHooks('w2lHTMLReplace', array(&$this, &$replacing, &$str));
 		$str = str_ireplace(array_keys($replacing), array_values($replacing), $str);
@@ -1857,6 +1861,7 @@ class Wiki2LaTeXParser {
 	
 	function doSpanAndDivReplace($matches) {
 		//$str = preg_match('/<'.$t.'(.*)class=\\\\dq\{\}(.*)'.$class.'(.*)\\\\dq\{\}(.*)>(.*)<\/'.$t.'>/sU', array($this, 'doSpanAndDivReplace'), $str);
+		//wfVarDump($matches);
 		$t = $this->DS_tag;
 		$tag_data = $this->getVal($t);
 		
@@ -1873,6 +1878,8 @@ class Wiki2LaTeXParser {
 			$match = array();
 			if ( strpos($attributes, $class ) ) {
 				// class is in here :)
+
+
 				
 				preg_match('/<'.$t.'(.*)class="(.*)'.$class.'(.*)"(.*)>(.*)<\/'.$t.'>/sU', $full_block, $match);
 
@@ -1885,6 +1892,7 @@ class Wiki2LaTeXParser {
 					// Callback
 					if ( is_callable($values['callback']) ) {
 						$result = call_user_func_array($values['callback'], array(&$this, $content, $t, $other_classes, $match[0]));
+
 					} else {
 						return $content;
 					}
@@ -1900,9 +1908,11 @@ class Wiki2LaTeXParser {
 			
 				} elseif ( isset($values['environment']) && $values['environment'] != '') {
 					//environment
+
 					$result = '\begin{'.$values['environment'].'}';
 					if ( isset( $values['filter']) && is_callable($values['filter']) ) {
 						$result .= call_user_func_array($values['filter'], array(&$this, $content, $t, $other_classes));
+						$this->debugMessage('Filter used:', $values['filter']);
 					} else {
 						$result .= $content;
 					}
@@ -2476,6 +2486,7 @@ class Wiki2LaTeXParser {
 	}
 	
 	function debugMessage($caller, $message) {
+
 		$this->debug[] = array('caller' => $caller, 'msg' => $message);
 		return true;
 	}
@@ -2491,7 +2502,7 @@ class Wiki2LaTeXParser {
 		if ( '' != $messages ) {
 			return '<div class="w2l-debug">'.$messages.'</div>';
 		} else {
-			return '';
+			return 'no errors discoverd';
 		}
 	}
 	

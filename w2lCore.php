@@ -251,7 +251,7 @@ class Wiki2LaTeXCore {
 		$output = '<textarea style="height:200px;">'.htmlspecialchars($parsed).'</textarea>';
 		$output .= $this->Parser->getErrorMessages();
 
-		if ( $wgUser->getOption('debug') == true ) {
+		if ( $wgUser->getOption('w2lDebug') == true ) {
 			$output .= wfMsg('w2l_debug_info', round($this->Parser->getParseTime(), 3), $this->Parser->curlyBraceDebugCounter, $this->Parser->curlyBraceLength);
 			$output .= $this->Parser->getDebugMessages();
 		}

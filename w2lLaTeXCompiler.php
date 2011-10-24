@@ -117,7 +117,8 @@ class Wiki2LaTeXCompiler {
 	
 		$go  = true;
 		$i   = 1;
-		$msg  = $this->msg;
+		$msg = $this->msg;
+		
 		if ( $this->debug == true && $this->is_admin == true) {
 			$msg .= "\n== Debug Information ==\n";
 			$msg .= wfMsg('w2l_compile_command', $command )."\n";
@@ -134,6 +135,10 @@ class Wiki2LaTeXCompiler {
 
 			if ( !file_exists( $file.'.pdf' ) ) {
 				$msg .= wfMsg('w2l_pdf_not_created', $file.'.pdf')."\n";
+				$msg .= "Current directory: ".getcwd()."\n";
+				$msg .= "Is it writable? ".wfBoolToStr(is_writable(getcwd()))."\n";
+				$msg .= "Is it a font-problem maybe? ".wfShellExec('kpsewhich -var-value TFMFONTS')."\n";
+				$msg .= "Is it a path maybe? ".wfShellExec('kpsewhich -var-value HOME')."\n";
 				$compile_error = true;
 				$go = false;
 			} else {

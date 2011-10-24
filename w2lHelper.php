@@ -28,8 +28,7 @@ $w2lLanguages = array(
 	'German (new)' => 'ngerman',
 	'Hungarian'=>'hungarian',
 	'Russian'=>'russian',
-	'ukranian'=>'ukrainian',
-	'Russian'=>'russian',
+	'Ukranian'=>'ukrainian',
 );
 
 class Wiki2LaTeXHelper {
@@ -203,8 +202,10 @@ EOF;
 			'type' => 'select',
 			'label-message' => 'w2l_babel', // a system message
 			'section' => 'wiki2latex',
+			'default' => '',
+			//'id' => '';
 			'options' => $w2lLanguages,
-			'default' => 'english',
+			//
 		);
 		return true;
 	}
