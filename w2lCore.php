@@ -100,7 +100,7 @@ class Wiki2LaTeXCore {
 		// Show a message, if form is called by a redirect from deleting all temp-files
 		if ( $msg_add != '' ) {
 			$output .= $msg_add;
-		} 
+		}
 
 		$output .= '<form method="post" action="'.$wgScriptPath.'/index.php">'."\n";
 		$output .= '<input type="hidden" name="title" value="'.$url_title.'" />'."\n";

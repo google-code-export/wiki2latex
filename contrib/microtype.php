@@ -39,7 +39,6 @@ function w2lMicrotypeForm( &$core, &$output ) {
 	} else {
 		$output .= '<label><input type="checkbox" name="use_microtype" value="true" /> ';
 	}
-	//$output .= wfMsg('w2l_select_mathpazo').'</label><br />'."\n";
 	$output .= ' Use Microtype</label><br />'."\n";
 	return true;
 }
@@ -48,7 +47,7 @@ function w2lMicrotypeForm( &$core, &$output ) {
 function w2lMicrotypePreferences ( $user, &$preferences ) {
 	wfLoadExtensionMessages( 'wiki2latex' );
 	$preferences['w2lMicrotypeDefault'] = array(
-		'type' => 'toggle',
+		'class' => 'HTMLCheckField',
 		'label-message' => 'w2l-microtype-default', // a system message
 		'section' => 'wiki2latex',
 	);

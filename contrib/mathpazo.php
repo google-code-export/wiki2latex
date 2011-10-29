@@ -40,7 +40,6 @@ function w2lMathpazoForm( &$core, &$output ) {
 	} else {
 		$output .= '<label><input type="checkbox" name="use_mathpazo" value="true" /> ';
 	}
-	//$output .= wfMsg('w2l_select_mathpazo').'</label><br />'."\n";
 	$output .= ' Use MathPazo</label><br />'."\n";
 	
 	return true;
@@ -49,7 +48,7 @@ function w2lMathpazoForm( &$core, &$output ) {
 function w2lMathPazoPreferences ( $user, &$preferences ) {
 	wfLoadExtensionMessages( 'wiki2latex' );
 	$preferences['w2lMathPazoDefault'] = array(
-		'type' => 'toggle',
+		'class' => 'HTMLCheckField',
 		'label-message' => 'w2l-mathpazo-default', // a system message
 		'section' => 'wiki2latex',
 	);

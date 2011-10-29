@@ -184,26 +184,24 @@ EOF;
 		global $w2lLanguages;
 		wfLoadExtensionMessages( 'wiki2latex' );
 		$preferences['w2lShowLog'] = array(
-			'type' => 'toggle',
+			'class' => 'HTMLCheckField',
 			'label-message' => 'w2l_show_log', // a system message
 			'section' => 'wiki2latex',
 		);
 		$preferences['w2lShowParsed'] = array(
-			'type' => 'toggle',
+			'class' => 'HTMLCheckField',
 			'label-message' => 'w2l_show_parsed', // a system message
 			'section' => 'wiki2latex',
 		);
 		$preferences['w2lDebug'] = array(
-			'type' => 'toggle',
+			'class' => 'HTMLCheckField',
 			'label-message' => 'w2l_use_debug', // a system message
 			'section' => 'wiki2latex',
 		);
 		$preferences['w2lBabelDefault'] = array(
-			'type' => 'select',
+			'class' => 'HTMLSelectField',
 			'label-message' => 'w2l_babel', // a system message
 			'section' => 'wiki2latex',
-			'default' => '',
-			//'id' => '';
 			'options' => $w2lLanguages,
 			//
 		);
