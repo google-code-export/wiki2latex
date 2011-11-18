@@ -119,7 +119,6 @@ class Wiki2LaTeXCore {
 		}
 
 		// Exportoptionen
-
 		$field_opt  = '<label>Documentclass: <select name="documentclass" id="documentclass">';
 		$field_opt .= '<option value="book">'.wfMsg('w2l_select_docclass_book').'</option>'."\n";
 		$field_opt .= '<option value="report">'.wfMsg('w2l_select_docclass_report').'</option>'."\n";
