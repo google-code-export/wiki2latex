@@ -37,7 +37,7 @@ class Wiki2LaTeXParser {
 		$this->version = W2L_VERSION;
 		
 		$this->initiated = false;
-		$this->doProfiling = true;
+		$this->doProfiling = false;
 		$this->ProfileLog  = array();
 		$this->parsing     = '';
 		$this->config      = array();
@@ -74,13 +74,13 @@ class Wiki2LaTeXParser {
 
 
 		$this->mw_vars = array();
-		$this->content_cache = array();
+		//%%$this->content_cache = array();
 		// Parserfunctions...
 		$this->pFunctions = array(); // takes custom ones (#switch)
 		$this->cpFunctions = array(); // takes those without #
 		$this->mask_chars = array();
 
-		$this->files_used = false;
+		//%%$this->files_used = false;
 		$this->files = array();
 		$this->required_packages = array();
 		$this->latex_headcode = array();
@@ -985,7 +985,7 @@ class Wiki2LaTeXParser {
 					return $case_imagename;
 				}
 
-				$title = $file->getTitle()->getText();
+				//%%$title = $file->getTitle()->getText();
 				$graphic_package = 'graphicx';
 				$graphic_command = "\\begin{center} \\resizebox{".$imgwidth."}{!}{\includegraphics{{$imagepath}}}\\\\ \\textit{{$caption}}\end{center}\n";
 				wfRunHooks('w2lImage', array(&$this, &$file, &$graphic_package, &$graphic_command, &$imagepath, &$imagename, &$imgwith, &$caption));
@@ -1171,12 +1171,12 @@ class Wiki2LaTeXParser {
 		// second: Some other aspects...
 		// Now call all the registered Callback-function with their contents.
 		foreach($matches as $key => $match) {
-			$input = $match[1];
-			$tag = $match[0];
-			$argv = array();
-			$argv = $match[2];
+			//%%$input = $match[1];
+			//%%$tag = $match[0];
+			//%%$argv = array();
+			//%%$argv = $match[2];
 			// Submitting false as $frame for now :(
-			$rpl = call_user_func($this->tags[$tag], $input, $argv, $this, false, 'latex');
+			$rpl = call_user_func($this->tags[$match[0]], $match[1], $match[2], $this, false, 'latex');
 			$this->tag_replace["$key"] = $rpl;
 		}
 		$this->profileOut($fName);
@@ -1985,8 +1985,7 @@ class Wiki2LaTeXParser {
 	}
 
 	public function maskLatexCommandChars($str) {
-		$fName = __METHOD__;
-		$this->profileIn($fName);
+
 		// Chars, which are important for latex commands:
 		// {,},\,&
 		$this->Et = $this->getMark("Et");
@@ -2003,13 +2002,12 @@ class Wiki2LaTeXParser {
 			'^' => '\textasciicircum{}',
 		);
 		$str = strtr($str, $chars);
-		$this->profileOut($fName);
+
 		return $str;
 	}
 
 	public function maskMwSpecialChars($str) {
-		$fName = __METHOD__;
-		$this->profileIn($fName);
+
 		// Special chars from mediawiki:
 		// #,*,[,],{,},|
 		$chars = array(
@@ -2017,13 +2015,12 @@ class Wiki2LaTeXParser {
 			"*" => "\(\ast{}\)",
 		);
 		$str = strtr($str, $chars);
-		$this->profileOut($fName);
+
 		return $str;
 	}
 
 	public function maskLatexSpecialChars($str) {
-		$fName = __METHOD__;
-		$this->profileIn($fName);
+
 		// _,%,§,$,&,#,€,
 		$chars = array(
 			'_' => '\_',
@@ -2033,7 +2030,7 @@ class Wiki2LaTeXParser {
 		
 		$str = strtr($str, $chars);
 		
-		$this->profileOut($fName);
+
 		return $str;
 	}
 
@@ -2041,14 +2038,13 @@ class Wiki2LaTeXParser {
 		// This function takes strings, which are to be inserted in verabtimenv,
 		// like links, f.e.
 		// returns a marker
-		$fName = __METHOD__;
-		$this->profileIn($fName);
+
 		++$this->marks_counter;
 		if ($number == -1) {
 			$number = $this->marks_counter;
 		}
 		$marker = '((UNIQ-W2L-'.$this->unique.'-'.$tag.'-'.sprintf('%08X', $number).'-QINU))';
-		$this->profileOut($fName);
+
 		return $marker;
 	}
 
@@ -2096,6 +2092,8 @@ class Wiki2LaTeXParser {
 	private function doCurlyBraces($matches) {
 		$orig  = $matches[0];
 		$match = $matches[1];
+		//%%
+		unset($matches)
 		//$this->reportError($match, __METHOD__);
 		$args = array();
 		//$match = strtr($match, array("\n"=>""));
@@ -2149,6 +2147,8 @@ class Wiki2LaTeXParser {
 					$value = str_replace($mark, '|', $value);
 					$new_args[] = $value;
 				}
+				//%%
+				unset($args);
 				$tmp = $this->processParserFunction($function, $expr, $new_args);
 			break;
 			case W2L_TRANSCLUSION:
@@ -2186,12 +2186,12 @@ class Wiki2LaTeXParser {
 		foreach($tmp as $keyvaluepair) {
 			++$current_arg;
 
-			if (substr_count($keyvaluepair, '=')) {
+			if (strpos($keyvaluepair, '=') !== false) {
 				$keyvaluepair = explode('=', $keyvaluepair, 2);
 				$key = trim($keyvaluepair[0]);
-				$value = trim($keyvaluepair[1]);
+				//%%$value = trim($keyvaluepair[1]);
 
-				$args[$key] = $value;
+				$args[$key] = trim($keyvaluepair[1]);
 			} else {
 				$args[$current_arg] = $keyvaluepair;
 			}
@@ -2217,20 +2217,20 @@ class Wiki2LaTeXParser {
 		if ( substr_count($match[1],'|') ) {
 			$with_default = explode('|', $match[1], 2);
 
-			$content = $this->templateVars[$with_default[0]];
+			//%% $content = $this->templateVars[$with_default[0]];
 
-			if ( empty($content) ) {
+			if ( empty($this->templateVars[$with_default[0]]) ) {
 				return $with_default[1];
 			} else {
-				return $content;
+				return $this->templateVars[$with_default[0]];
 			}
 		} else {
-			$content = $this->templateVars[$match[1]];
+			//%% $content = $this->templateVars[$match[1]];
 
-			if ( empty($content) ) {
+			if ( empty($this->templateVars[$match[1]]) ) {
 				return $match[0];
 			} else {
-				return $content;
+				return $this->templateVars[$match[1]];
 			}
 		}
 
@@ -2411,6 +2411,7 @@ class Wiki2LaTeXParser {
 	
 	public function addLatexHeadCode($code) {
 		$this->latex_headcode[] = $code;
+		return true;
 	}
 	public function getLatexHeadCode() {
 		$code = array_unique($this->latex_headcode);
@@ -2450,7 +2451,7 @@ class Wiki2LaTeXParser {
 			$str = substr($str, $howmany);
 			
 			// get value
-					$attr_value = '';
+			$attr_value = '';
 			$fChar = $str{0};
 			if ( $fChar == '=' ) 
 				$str = substr($str, 1);
@@ -2480,8 +2481,10 @@ class Wiki2LaTeXParser {
 			}
 			// save it to the array
 			$result[$attr] = $attr_value;
+			//%%
+			unset($attr_value);
 			$i++;
-			}
+		}
 		return $result;
 	}
 	
