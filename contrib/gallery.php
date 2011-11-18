@@ -22,20 +22,43 @@ if ( !function_exists('w2lGallery') ) {
 
 		// $input should be a list of Images like this:
 		// http://www.mediawiki.org/wiki/Help:Images#Rendering_a_gallery_of_images
-	
+		$gallery = "";
+		$caption = '';
 		$parser->addPackageDependency('graphicx');
 		
-		$parts = explode("\n", $input, 2);
+		$parts = explode("\n", $input);
 		
 		foreach ($parts as $part ) {
 			// check for caption...
+			$data = explode("|", $part, 2);
 			
-			// get filepath
+			if ( isset($data[1]) ) {
+				$caption = $data[1];
+			}
 			
-			// make LaTeX-Code
-		}
-		$output = $input;
+			// get filepath (as is used in w2lParser.php)
+				$title = Title::makeTitleSafe( NS_IMAGE, $data[0] );
+				$file = Image::newFromTitle( $title );
+				$file->loadFromFile();
+				
+				if ( $file && $file->exists() ) {
+					$imagepath = $file->getPath();
+					$imagepath = str_replace('\\', '/', $imagepath);
+					$title = $file->getTitle()->getText();
+					$gallery .= "\\begin{minipage}[t]{4cm}\n\includegraphics{{$imagepath}}}\\\\ \\textit{{$caption}}\n\end{minipage}\n";
+				
+				} else {
+					// does not exist!!!
+					$case_imagename = str_replace('_', ' ', $case_imagename);
+					$gallery .= "\\begin{minipage}[t]{4cm}\n$case_imagename\n\end{minipage}\n";
+				}
 
-		return $output;
+			
+			// make LaTeX-Code					
+			$masked_command = $parser->getMark("gallery");
+			$parser->mask($masked_command, $gallery);
+		}
+		
+		return $gallery;
 	}
 }
