@@ -919,7 +919,9 @@ class Wiki2LaTeXParser {
 
 		$link_int  = $link_tmp[0];
 		$link_text = ( isset($link_tmp[1]) ) ? $link_tmp[1] : $link_tmp[0];
-
+		//%%
+		unset($link_tmp);
+		
 		$title = Title::newFromText($link_int);
 		
 		if ( !is_a($title, 'Title') ) {
@@ -2078,6 +2080,7 @@ class Wiki2LaTeXParser {
 				//$part = str_replace($marker, '|', $part);
 			}
 			$new_str .= $part;
+
 		}
 
 		//$str = preg_replace_callback('/\{\{(.*?)\}\}/sm', array($this, 'doCurlyBraces'), $str);
@@ -2093,7 +2096,7 @@ class Wiki2LaTeXParser {
 		$orig  = $matches[0];
 		$match = $matches[1];
 		//%%
-		unset($matches)
+		unset($matches);
 		//$this->reportError($match, __METHOD__);
 		$args = array();
 		//$match = strtr($match, array("\n"=>""));
@@ -2112,6 +2115,7 @@ class Wiki2LaTeXParser {
 		$tmp = '';
 		$type = $this->checkIdentifier($identifier);
 		//$this->reportError($identifier."->".$type, __METHOD__);
+
 		switch ($type) {
 			case W2L_TEMPLATE:
 				if ( '' == $args ) {
@@ -2126,6 +2130,7 @@ class Wiki2LaTeXParser {
 				$tmp = $this->preprocessString($tmp);
 				//$this->reportError(strlen($tmp), __METHOD__);
 				$tmp = $this->processTemplateVariables($tmp, $args);
+
 				//$this->reportError(strlen($tmp), __METHOD__);
 				$tmp = $this->processCurlyBraces($tmp);
 			break;
@@ -2162,6 +2167,7 @@ class Wiki2LaTeXParser {
 				$tmp = $this->getContentByTitle($title);
 				$tmp = $this->preprocessString($tmp);
 				$tmp = $this->processTemplateVariables($tmp, $args);
+				
 				$tmp = $this->processCurlyBraces($tmp);
 			break;
 			case W2L_VARIABLE:
@@ -2208,6 +2214,7 @@ class Wiki2LaTeXParser {
 		$str = preg_replace_callback('/\{\{\{(.*?)\}\}\}/sm', array($this, 'doTemplateVariables'), $str);
 		$chars = array('{{{'=>'\{\{\{', '}}}' => '\}\}\}');
 		$str = strtr($str, $chars);
+		//%% This could break nested templates... We'll see
 		unset($this->templateVars);
 		return $str;
 	}
@@ -2242,6 +2249,7 @@ class Wiki2LaTeXParser {
 		foreach($args as $value) {
 			$params[] = trim($value);
 		}
+		unset($args);
 
 		if ( array_key_exists($fnc , $this->pFunctions) ) {
 			$content = call_user_func_array($this->pFunctions[$fnc], $params);
@@ -2250,7 +2258,9 @@ class Wiki2LaTeXParser {
 			}
 			return $content;
 		} else {
-			return '{{#'.$fnc.':'.$expr.'|'.implode('|', $args).'}}';
+			//%% old line:
+			//return '{{#'.$fnc.':'.$expr.'|'.implode('|', $args).'}}';
+			return '{{#'.$fnc.':'.$expr.'|'.implode('|', $params).'}}';
 		}
 
 	}

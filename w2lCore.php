@@ -177,7 +177,7 @@ class Wiki2LaTeXCore {
 		if ( $LaTeX_namespace !== false ) {
 			$tables = 'page';
 			$vars   = array('page_title', 'page_id');
-			$conds  = array("page_namespace = ".$LaTeX_namespace, "page_title Like 'W2L_%'");
+			$conds  = array("page_namespace = ".$LaTeX_namespace, "page_title Like 'W2L_%'", 'page_is_redirect = 0');
 			$db     = wfGetDB(DB_SLAVE);
 			$result = $db->select($tables, $vars, $conds);
 			while ($line = $db->fetchRow( $result )) {
@@ -253,6 +253,7 @@ class Wiki2LaTeXCore {
 		if ( $wgUser->getOption('w2lDebug') == true ) {
 			$output .= wfMsg('w2l_debug_info', round($this->Parser->getParseTime(), 3), $this->Parser->curlyBraceDebugCounter, $this->Parser->curlyBraceLength);
 			$output .= $this->Parser->getDebugMessages();
+			$output .= '<div>Memory-Peak: '.sprintf("%.2f",((memory_get_peak_usage() / 1024) / 1024 )).' MB</div>';
 		}
 		$wgOut->addHTML($output);
 
@@ -337,6 +338,7 @@ class Wiki2LaTeXCore {
 			$output .= wfMsg('w2l_debug_info', $this->Parser->getParseTime(), $this->Parser->curlyBraceDebugCounter, $this->Parser->curlyBraceLength);
 			//$output .= '<pre>'.htmlspecialchars($parsed).'</pre>';
 			$output .= $this->Parser->getDebugMessages();
+			$output .= '<div>Memory-Peak: '.sprintf("%.2f",((memory_get_peak_usage() / 1024) / 1024 )).' MB</div>';
 		}
 		$output .= $this->getFolderLinks();
 		$wgOut->setPagetitle( wfMsg('w2l_result_title', $title) );
@@ -552,7 +554,7 @@ class Wiki2LaTeXCore {
                         'numberoffiles' =>$wgContLang->formatNum( SiteStats::images() ),
                         'numberofusers' => $wgContLang->formatNum( SiteStats::users() ),
                         'numberofpages' => $wgContLang->formatNum( SiteStats::pages() ),
-                        'numberofadmins' => $wgContLang->formatNum( SiteStats::admins() ),
+                        //'numberofadmins' => $wgContLang->formatNum( SiteStats::admins() ),
                         'numberofedits' =>$wgContLang->formatNum( SiteStats::edits() ),
                         'currenttimestamp' => wfTimestampNow(),
                         'localtimestamp' => $localTimestamp,
