@@ -20,7 +20,7 @@ if ( !defined('MEDIAWIKI') ) {
 	exit( 1 );
 }
 
-define('W2L_VERSION', 'Aegir: dev');
+define('W2L_VERSION', 'Aegir: 2012-02-03');
 
 define('NS_WIKI2LATEX', 400);
 define('NS_WIKI2LATEX_TALK', 401);

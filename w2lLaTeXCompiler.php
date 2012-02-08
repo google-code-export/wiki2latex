@@ -34,7 +34,7 @@ class Wiki2LaTeXCompiler {
 		$this->path    = '';
 		$this->mkdir   = $mkdir;
 		
-		$this->debug   = true;
+		$this->debug   = false;
 		$this->log     = '';
 		
 		return true;

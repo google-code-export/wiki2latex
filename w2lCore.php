@@ -554,7 +554,7 @@ class Wiki2LaTeXCore {
                         'numberoffiles' =>$wgContLang->formatNum( SiteStats::images() ),
                         'numberofusers' => $wgContLang->formatNum( SiteStats::users() ),
                         'numberofpages' => $wgContLang->formatNum( SiteStats::pages() ),
-                        //'numberofadmins' => $wgContLang->formatNum( SiteStats::admins() ),
+                        'numberofadmins' => $wgContLang->formatNum( SiteStats::numberingroup('sysop') ),
                         'numberofedits' =>$wgContLang->formatNum( SiteStats::edits() ),
                         'currenttimestamp' => wfTimestampNow(),
                         'localtimestamp' => $localTimestamp,
