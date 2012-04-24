@@ -976,7 +976,7 @@ class Wiki2LaTeXParser {
 					$caption = trim($part);
 				}
 				$title = Title::makeTitleSafe( NS_IMAGE, $imagename );
-				$file = Image::newFromTitle( $title );
+				$file = LocalFile::newFromTitle( $title );
 				$file->loadFromFile();
 				if ( $file && $file->exists() ) {
 					$imagepath = $file->getPath();
