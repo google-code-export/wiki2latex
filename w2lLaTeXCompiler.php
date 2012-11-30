@@ -68,9 +68,11 @@ class Wiki2LaTeXCompiler {
 		}
 		
 		$this->path = $tempdir;
+		
 
 		if ( true == $this->mkdir ) {
 			if ( !@mkdir($this->path) ) {
+				wfVarDump($this->path);
 				$wgOut->addHTML( wfMsg('w2l_temp_dir_missing') );
 				$this->msg = $msg;
 				return false;
@@ -107,6 +109,8 @@ class Wiki2LaTeXCompiler {
 		
 		global $wgUser;
 		
+		$path = '.:{{/home/hg/.texmf-config,/home/hg/.texmf-var,/home/hg/texmf,/etc/texmf,!!/var/lib/texmf,!!/usr/share/texmf,!!/usr/share/texlive/texmf,!!/usr/local/share/texmf,!!/usr/share/texlive/texmf-dist}/fonts,/tmp/texfonts}/tfm//';
+		
 		$this->debug = $wgUser->getOption('w2lDebug');
 		$this->is_admin = in_array('sysop', $wgUser->getGroups());
 		
@@ -119,19 +123,20 @@ class Wiki2LaTeXCompiler {
 		$i   = 1;
 		$msg = $this->msg;
 		
-		if ( $this->debug == true && $this->is_admin == true) {
+		//if ( $this->debug == true && $this->is_admin == true) {
 			$msg .= "\n== Debug Information ==\n";
 			$msg .= wfMsg('w2l_compile_command', $command )."\n";
 			$msg .= wfMsg('w2l_temppath', $this->path )."\n";
 			$msg .= "Current directory: ".getcwd()."\n";
 			$msg .= "User: ".wfShellExec("whoami")."\n";
 			$msg .= "== PDF-LaTeX Information ==\n".wfShellExec("pdflatex -version");
-		}
+		//}
 		
 		while ( (true == $go ) OR ( $i > 5 ) ) {
 			$msg .= "\n".wfMsg('w2l_compile_run', $i)."\n";
-
-			$msg .= wfShellExec($command);
+			putenv('TFMFONTS='.$path);
+			putenv('HOME=/home/hg/');
+			$msg .= exec($command);//$command);
 
 			if ( !file_exists( $file.'.pdf' ) ) {
 				$msg .= wfMsg('w2l_pdf_not_created', $file.'.pdf')."\n";
@@ -180,8 +185,11 @@ class Wiki2LaTeXCompiler {
 			}
 			$directory->close();
 		}
-		
-		$this->log = file_get_contents($file.'.log');
+		if (file_exists($file.'.log')) {
+			$this->log = file_get_contents($file.'.log');
+		} else {
+			$this->log = 'Log file was not created...';
+		}
 		chdir($cur_dir);
 
 		$this->msg = $msg;

@@ -64,7 +64,7 @@ class Wiki2LaTeXParser {
 		$this->ireplace_replace = array();
 		$this->regexp_search  = array(); // NEVER set one of these values via another way than by addRegExp
 		$this->regexp_replace = array();
-
+		$this->directives = array();
 		$this->error_msg = array();
 		$this->is_error = false;
 		// takes parser functions
@@ -206,6 +206,7 @@ class Wiki2LaTeXParser {
 			break;
 		}
 		//$this->reportError($text, __METHOD__);
+		$text = $this->getPerPageDirectives($text);
 		wfRunHooks("w2lBeforeExtractTags", array( &$this, &$text ) );
 		$text = $this->extractParserExtensions($text);
 		$text = $this->extractPre($text);
@@ -892,14 +893,7 @@ class Wiki2LaTeXParser {
 
 	}
 
-	function mask($key, $value) {
-		$this->mask_chars[$key] = $value;
-	}
 
-	function deMask($str) {
-		$str = str_replace(array_keys($this->mask_chars), array_values($this->mask_chars), $str);
-		return $str;
-	}
 
 	private function doInternalLinks( $str = '' ) {
 		$fName = __METHOD__;
@@ -2036,19 +2030,7 @@ class Wiki2LaTeXParser {
 		return $str;
 	}
 
-	public function getMark($tag, $number = -1) {
-		// This function takes strings, which are to be inserted in verabtimenv,
-		// like links, f.e.
-		// returns a marker
 
-		++$this->marks_counter;
-		if ($number == -1) {
-			$number = $this->marks_counter;
-		}
-		$marker = '((UNIQ-W2L-'.$this->unique.'-'.$tag.'-'.sprintf('%08X', $number).'-QINU))';
-
-		return $marker;
-	}
 
 	public function processCurlyBraces($str) {
 		$fName = __METHOD__;
@@ -2518,7 +2500,70 @@ class Wiki2LaTeXParser {
 			return 'no errors discoverd';
 		}
 	}
-	
+
+	public function getMark($tag, $number = -1) {
+		// This function takes strings, which are to be inserted in verabtimenv,
+		// like links, f.e.
+		// returns a marker
+
+		++$this->marks_counter;
+		if ($number == -1) {
+			$number = $this->marks_counter;
+		}
+		$marker = '((UNIQ-W2L-'.$this->unique.'-'.$tag.'-'.sprintf('%08X', $number).'-QINU))';
+
+		return $marker;
+	}
+
+	function mask($key, $value) {
+		$this->mask_chars[$key] = $value;
+	}
+
+	function deMask($str) {
+		$str = str_replace(array_keys($this->mask_chars), array_values($this->mask_chars), $str);
+		return $str;
+	}
+
+/**
+ * This function combines getMark() and mask().
+ * Better use this function in extensions and stuff
+ * Though in special circumstances you should not
+ *
+ * @param string $content
+ *  The contetnt to be masked 
+ * @param string $type
+ *  The type of the content
+ * @retval string
+ *  Returns a marker to be inserted into articles
+ */
+	function getMarkerFor($content, $type = 'UNKNOWN') {
+		$marker = $this->getMark($type);
+		$this->mask($marker, $content);
+		return $marker;
+	}
+
+	function getPerPageDirectives($text) {
+		$matches = array();
+		$count = 0;
+		$expr = '/__([A-Z_])*__/';
+
+		$count = preg_match_all( $expr, $text, $matches);
+
+		foreach( $matches[0] as $directive ) {
+			$this->directives[$directive] = true;
+			$this->debugMessage( 'GetPerPageDirectives', $directive );
+		}
+		$text = str_replace( array_keys($this->directives), "", $text );
+		return $text;
+	}
+
+	function hasDirective($directive) {
+		if (isset( $this->directives[$directive] ) && $this->directives[$directive] == true ) {
+			return true;
+		}
+		return false;
+	}
+
 	// Functions regarding sorting and Bibtex
 	function requireBibtex()  { $this->run_bibtex = true; }
 	function requireSorting() { 

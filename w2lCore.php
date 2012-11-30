@@ -344,17 +344,18 @@ class Wiki2LaTeXCore {
 		$wgOut->setPagetitle( wfMsg('w2l_result_title', $title) );
 		$wgOut->setSubtitle( wfMsg('w2l_result_subtitle', $title) );
 		$wgOut->addHTML( wfMsg('w2l_result_heading') );
+		$title_fn = w2lWebsafeTitle($title);
+		//wfVarDump($title_fn);
 		if (false == $compile_error) {
-			$title_fn = w2lWebsafeTitle($title);
 			
 			$wgOut->addHTML( wfMsg('w2l_result_folder', $wgScriptPath, $title_fn, $tmpPiece) );
 			
 			$wgOut->addHTML($this->Parser->getErrorMessages());
 
 		} elseif ( $compile == false ) {
-			$wgOut->addHTML( wfMsg('w2l_result_tex', $wgScriptPath, $title, $tmpPiece));
+			$wgOut->addHTML( wfMsg('w2l_result_tex', $wgScriptPath, $title_fn, $tmpPiece));
 		} else {
-			$wgOut->addHTML('<p>'. wfMsg('w2l_latex_failed',$wgScriptPath, $tmpPiece). '</p>' );
+			$wgOut->addHTML('<p>'. wfMsg('w2l_latex_failed',$wgScriptPath, $title_fn, $tmpPiece). '</p>' );
 		}
 		$wgOut->addHTML( '<textarea style="height:200px">'.$compiler->getLog().'</textarea>' );
 		if ( $wgUser->getOption('w2lShowParsed') == true ) {

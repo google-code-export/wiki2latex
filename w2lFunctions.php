@@ -18,18 +18,23 @@
  
 if ( defined('W2L_SENDFILE') ) {
 	// a small function from mediawiki needed in sendfile.php
-	function wfTempDir() {
-		if( function_exists( 'sys_get_temp_dir' ) ) {
+	if ( !function_exists('wfTempDir') ) {
+		function wfTempDir() {
+			global $wgTmpDirectory;
+
+			if ( $wgTmpDirectory !== false ) {
+				return $wgTmpDirectory;
+			}
+
+			$tmpDir = array_map( "getenv", array( 'TMPDIR', 'TMP', 'TEMP' ) );
+
+			foreach( $tmpDir as $tmp ) {
+				if( $tmp && file_exists( $tmp ) && is_dir( $tmp ) && is_writable( $tmp ) ) {
+					return $tmp;
+				}
+			}
 			return sys_get_temp_dir();
 		}
-		foreach( array( 'TMPDIR', 'TMP', 'TEMP' ) as $var ) {
-			$tmp = getenv( $var );
-			if( $tmp && file_exists( $tmp ) && is_dir( $tmp ) && is_writable( $tmp ) ) {
-				return $tmp;
-			}
-		}
-		# Hope this is Unix of some kind!
-		return '/tmp';
 	}
 }
 
