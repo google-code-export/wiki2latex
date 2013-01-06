@@ -50,10 +50,11 @@ class Wiki2LaTeXCore {
 		// Call appropriate method
 		if ( method_exists( $this, $action ) ) {
 			// Mediawiki objects
-			$this->mArticle =& $article;
-			$this->mTitle   =& $wgTitle;
-			$this->mUser    =& $wgUser;
-			$this->mValues  = new webRequest();
+			$this->mArticle  =& $article;
+			$this->mTitle    =& $wgTitle;
+			$this->mUser     =& $wgUser;
+			$this->mValues   = new webRequest();
+			$this->mRevision = $this->mArticle->getRevisionFetched();
 
 			// Wiki2LaTeX objects
 			$this->Parser = new Wiki2LaTeXParser;
@@ -386,7 +387,7 @@ class Wiki2LaTeXCore {
 	}
         
 	function clearTempFolder() {
-		$dir   = wfTempDir();
+		$dir   = w2lTempDir();
 		$state = $this->full_rmdir($dir, false);
 		return $state;
 	}
@@ -530,7 +531,8 @@ class Wiki2LaTeXCore {
                         'revisionid' => $this->mRevisionId,
                         'revisionday' => intval( substr( $this->getRevisionTimestamp(), 6, 2 ) ),
                         'revisionday2' => substr( $this->getRevisionTimestamp(), 6, 2 ),
-                        'revisionmonth' => intval( substr( $this->getRevisionTimestamp(), 4, 2 ) ),
+                        'revisionmonth' => substr( $this->getRevisionTimestamp(), 4, 2 ),
+                        'revisionmonth1' => intval( substr( $this->getRevisionTimestamp(), 4, 2 ) ),
                         'revisionyear' => substr( $this->getRevisionTimestamp(), 0, 4 ),
                         'revisiontimestamp' => $this->getRevisionTimestamp(),
                         'namespace' => str_replace('_',' ',$wgContLang->getNsText( $this->mTitle->getNamespace() ) ),
@@ -565,7 +567,12 @@ class Wiki2LaTeXCore {
                         'servername' => $wgServerName,
                         'scriptpath' =>$wgScriptPath,
                         'directionmark' => $wgContLang->getDirMark(),
-                        'contentlanguage' => $wgContLanguageCode
+                        'contentlanguage' => $wgContLanguageCode,
+                        'pageid' => $this->mTitle->getArticleID(),
+                        'namespacenumber' => $this->mTitle->getNamespace(),
+                        'numberofactiveusers' => $wgContLang->formatNum( SiteStats::activeUsers() ),
+                        'revisionuser' => $this->mRevision->getUserText(),
+                        'stylepath' => $wgStylePath
                 );
                 
                 // These are a bit more complicated...

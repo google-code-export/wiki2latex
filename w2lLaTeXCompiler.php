@@ -22,7 +22,7 @@ if ( !defined('MEDIAWIKI') ) {
 
 class Wiki2LaTeXCompiler {
 
-	function __construct($piece, $mkdir) {
+	function __construct($piece, $mkdir = true) {
 		global $w2lConfig;
 		$this->files   = array();
 		$this->command = $w2lConfig['ltx_command'];
@@ -36,7 +36,7 @@ class Wiki2LaTeXCompiler {
 		
 		$this->debug   = false;
 		$this->log     = '';
-		
+		$this->timer   = 0;
 		return true;
 	}
 	
@@ -51,7 +51,7 @@ class Wiki2LaTeXCompiler {
 		$this->is_admin = in_array('sysop', $wgUser->getGroups());
 		
 		$msg = '';
-		$tempdir  = wfTempDir();
+		$tempdir  = w2lTempDir();
 		
 		if ( $this->debug == true && $this->is_admin == true) {
 			$msg .= "System temp dir: ".$tempdir."\n";
@@ -76,20 +76,23 @@ class Wiki2LaTeXCompiler {
 				$wgOut->addHTML( wfMsg('w2l_temp_dir_missing') );
 				$this->msg = $msg;
 				return false;
-			}
+            }
+        
+            $chmod = chmod($this->path, 0777);
+            
 			if ( !file_exists($this->path) OR !is_dir($this->path) OR !is_writable($this->path) ) {
 				$wgOut->addHTML( wfMsg('w2l_temp_dir_missing') );
 				$this->msg = $msg;
 				return false;
 			}
-			$chmod = chmod($this->path, 0777);
+			
 
 		}
 
 		$cur_dir = getcwd();
 		chdir($tempdir);
 
-		foreach( $this->files as $file_name => $file_content) {
+		foreach ( $this->files as $file_name => $file_content) {
 			$file_content = str_replace(array_keys($tpl_vars), array_values($tpl_vars), $file_content);
 			$failure = file_put_contents($file_name, $file_content);
 			if ( $failure !== false ) {
@@ -108,9 +111,7 @@ class Wiki2LaTeXCompiler {
 	function runLaTeX( $file = 'Main', $sort = false, $bibtex = false ) {
 		
 		global $wgUser;
-		
-		$path = '.:{{/home/hg/.texmf-config,/home/hg/.texmf-var,/home/hg/texmf,/etc/texmf,!!/var/lib/texmf,!!/usr/share/texmf,!!/usr/share/texlive/texmf,!!/usr/local/share/texmf,!!/usr/share/texlive/texmf-dist}/fonts,/tmp/texfonts}/tfm//';
-		
+		$timer_start = microtime(true);
 		$this->debug = $wgUser->getOption('w2lDebug');
 		$this->is_admin = in_array('sysop', $wgUser->getGroups());
 		
@@ -123,20 +124,19 @@ class Wiki2LaTeXCompiler {
 		$i   = 1;
 		$msg = $this->msg;
 		
-		//if ( $this->debug == true && $this->is_admin == true) {
+		if ( $this->debug == true && $this->is_admin == true) {
 			$msg .= "\n== Debug Information ==\n";
 			$msg .= wfMsg('w2l_compile_command', $command )."\n";
 			$msg .= wfMsg('w2l_temppath', $this->path )."\n";
 			$msg .= "Current directory: ".getcwd()."\n";
 			$msg .= "User: ".wfShellExec("whoami")."\n";
 			$msg .= "== PDF-LaTeX Information ==\n".wfShellExec("pdflatex -version");
-		//}
+		}
 		
 		while ( (true == $go ) OR ( $i > 5 ) ) {
 			$msg .= "\n".wfMsg('w2l_compile_run', $i)."\n";
-			putenv('TFMFONTS='.$path);
-			putenv('HOME=/home/hg/');
-			$msg .= exec($command);//$command);
+
+			$msg .= wfShellExec($command);
 
 			if ( !file_exists( $file.'.pdf' ) ) {
 				$msg .= wfMsg('w2l_pdf_not_created', $file.'.pdf')."\n";
@@ -148,14 +148,14 @@ class Wiki2LaTeXCompiler {
 				$go = false;
 			} else {
 				$compile_error = false;
-
+				/*
 				if ( true == $sort ) {
 					// sort it, baby
 					$msg .= '===Sort-Result==='."\n";
 					$msg .= $this->sortIndexFile($file);
 					$msg .= "\n";
 				}
-				/*
+				
 				if ( true == $bibtex ) {
 					// run bibtex
 					$msg .= '===BibTeX-Result==='."\n";
@@ -169,7 +169,6 @@ class Wiki2LaTeXCompiler {
 				}
 				
 				++$i;
-
 
 			}
 		}
@@ -185,13 +184,16 @@ class Wiki2LaTeXCompiler {
 			}
 			$directory->close();
 		}
-		if (file_exists($file.'.log')) {
+		if ( file_exists($file.'.log') ) {
 			$this->log = file_get_contents($file.'.log');
 		} else {
 			$this->log = 'Log file was not created...';
 		}
 		chdir($cur_dir);
-
+		$timer_end = microtime(true);
+		$this->timer = $timer_end - $timer_start;
+		$this->timer = round($this->timer, 3);
+		$msg .= "Running time LaTeX: ".$timer." seconds";
 		$this->msg = $msg;
 		return $compile_error;
 	}
@@ -228,7 +230,6 @@ class Wiki2LaTeXCompiler {
 		$msg = '';
 		
 		$pdflatex_version = wfShellExec("pdflatex -version");
-		
 		
 	}
 }

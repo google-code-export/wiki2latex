@@ -98,73 +98,7 @@ class Wiki2LaTeXParser {
 		$this->debug = array();
 	}
 
-	/* Public Functions */
-
-	public function setConfig($cArray) {
-		foreach ($cArray as $key=>$value) {
-			$this->setVal($key, $value);
-		}
-		return true;
-	}
-	public function setVal($key, $value) {
-		$this->config[$key] = $value;
-
-		return true;
-	}
-
-	public function getVal($key) {
-		if ( array_key_exists($key, $this->config) ) {
-			return $this->config[$key];
-		} else {
-			return W2L_UNDEFINED;
-		}
-	}
-
-	public function addSimpleReplace($search, $replace, $case_sensitive = 1) {
-		if ($case_sensitive == 0 ) {
-			$this->ireplace_search[]  = $search;
-			$this->ireplace_replace[] = $replace;
-		} else {
-			$this->replace_search[]  = $search;
-			$this->replace_replace[] = $replace;
-		}
-	}
-	
-	private function doSimpleReplace( $str ) {
-		$fName = __METHOD__;
-		$this->profileIn($fName);
-		// Here we're replacing.
-		$str = str_replace($this->replace_search, $this->replace_replace, $str);
-		$str = str_ireplace($this->ireplace_search, $this->ireplace_replace, $str);
-		$this->profileOut($fName);
-		return $str;
-	}
-
-	public function addTagCallback($tag, $callback) {
-		$this->tags[$tag] = $callback;
-		$this->elements[] = $tag;
-	}
-
-	public function addParserFunction($tag, $callback) {
-		$this->pFunctions[$tag] = $callback;
-	}
-
-	public function addCoreParserFunction($tag, $callback) {
-		$this->addParserFunction($tag, $callback);
-	}
-
-	public function addRegExp($search, $replace) {
-		$this->regexp_search[]  = $search;
-		$this->regexp_replace[] = $replace;
-	}
-
-	public function recursiveTagParse( $str = '' ) {
-		$fName = __METHOD__;
-		$this->profileIn($fName);
-		$str = $this->internalParse($str);
-		$this->profileOut($fName);
-		return $str;
-	}
+/* First things first: parse() and internalParse() are the most important functions */
 
 	public function parse($text, &$title, $mode = W2L_STRING) {
 		$this->profileIn(__METHOD__);
@@ -237,6 +171,120 @@ class Wiki2LaTeXParser {
 		return $text;
 	}
 
+	function internalParse($str) {
+		$this->profileIn(__METHOD__);
+
+		// Used for parsing the string as is, without comments, extension-tags, etc.
+
+		//$str = $this->doSimpleReplace($str);
+		
+		$str = $this->doInternalLinks($str);
+		$str = $this->doExternalLinks($str);
+		
+		wfRunHooks('w2lBeforeMask', array( &$this, &$str ) );
+		$str = $this->maskLatexCommandChars($str);
+		// Now we can begin parsing. We parse as close as possible the way mediawiki parses a string.
+		// So, start with tables
+		
+		wfRunHooks('w2lBeforeTables', array( &$this, &$str ) );
+		$str = $this->doTableStuff($str);
+
+		// Next come these Blocklevel elments
+		// Now go on with headings
+
+		$str = $this->doHeadings($str);
+
+		$str = $this->doQuotes($str);
+
+		$str = $this->doHTML($str);
+		$str = $this->doQuotationMarks($str);
+
+		$str = $this->maskLatexSpecialChars($str);
+		$str = $this->doSpecialChars($str);
+		$str = $this->processHtmlEntities($str);
+		$str = $this->maskLaTeX($str);
+		$str = $this->doBlocklevels($str);
+		$str = $this->maskMwSpecialChars($str);
+		
+		$str = $this->doDivAndSpan($str, 'span');
+		$str = $this->doDivAndSpan($str, 'div');
+		
+		$str = $this->doSimpleReplace($str);
+
+
+		wfRunHooks('w2lInternalFinish', array( &$this, &$str ) );
+
+		$this->profileOut(__METHOD__);
+		return $str;
+    }
+
+	public function recursiveTagParse( $str = '' ) {
+		$fName = __METHOD__;
+		$this->profileIn($fName);
+		$str = $this->internalParse($str);
+		$this->profileOut($fName);
+		return $str;
+	}
+	/* Public Functions */
+
+	public function setConfig($cArray) {
+		foreach ($cArray as $key=>$value) {
+			$this->setVal($key, $value);
+		}
+		return true;
+	}
+	public function setVal($key, $value) {
+		$this->config[$key] = $value;
+
+		return true;
+	}
+
+	public function getVal($key) {
+		if ( array_key_exists($key, $this->config) ) {
+			return $this->config[$key];
+		} else {
+			return W2L_UNDEFINED;
+		}
+	}
+
+	public function addSimpleReplace($search, $replace, $case_sensitive = 1) {
+		if ($case_sensitive == 0 ) {
+			$this->ireplace_search[]  = $search;
+			$this->ireplace_replace[] = $replace;
+		} else {
+			$this->replace_search[]  = $search;
+			$this->replace_replace[] = $replace;
+		}
+	}
+	
+	private function doSimpleReplace( $str ) {
+		$fName = __METHOD__;
+		$this->profileIn($fName);
+		// Here we're replacing.
+		$str = str_replace($this->replace_search, $this->replace_replace, $str);
+		$str = str_ireplace($this->ireplace_search, $this->ireplace_replace, $str);
+		$this->profileOut($fName);
+		return $str;
+	}
+
+	public function addTagCallback($tag, $callback) {
+		$this->tags[$tag] = $callback;
+		$this->elements[] = $tag;
+	}
+
+	public function addParserFunction($tag, $callback) {
+		$this->pFunctions[$tag] = $callback;
+	}
+
+	public function addCoreParserFunction($tag, $callback) {
+		$this->addParserFunction($tag, $callback);
+	}
+
+	public function addRegExp($search, $replace) {
+		$this->regexp_search[]  = $search;
+		$this->regexp_replace[] = $replace;
+	}
+
 	function addChar($html, $latex, $utf_dec = false, $req_package = false) {
 		if ($utf_dec === false ) {
 			$ent_dec = '';
@@ -285,53 +333,6 @@ class Wiki2LaTeXParser {
 			unset($entity);
 		}
 
-		return $str;
-	}
-
-	function internalParse($str) {
-		$this->profileIn(__METHOD__);
-
-		// Used for parsing the string as is, without comments, extension-tags, etc.
-
-		//$str = $this->doSimpleReplace($str);
-		
-		$str = $this->doInternalLinks($str);
-		$str = $this->doExternalLinks($str);
-		
-		wfRunHooks('w2lBeforeMask', array( &$this, &$str ) );
-		$str = $this->maskLatexCommandChars($str);
-		// Now we can begin parsing. We parse as close as possible the way mediawiki parses a string.
-		// So, start with tables
-		
-		wfRunHooks('w2lBeforeTables', array( &$this, &$str ) );
-		$str = $this->doTableStuff($str);
-
-		// Next come these Blocklevel elments
-		// Now go on with headings
-
-		$str = $this->doHeadings($str);
-
-		$str = $this->doQuotes($str);
-
-		$str = $this->doHTML($str);
-		$str = $this->doQuotationMarks($str);
-
-		$str = $this->maskLatexSpecialChars($str);
-		$str = $this->doSpecialChars($str);
-		$str = $this->processHtmlEntities($str);
-		$str = $this->maskLaTeX($str);
-		$str = $this->doBlocklevels($str);
-		$str = $this->maskMwSpecialChars($str);
-		
-		$str = $this->doDivAndSpan($str, 'span');
-		$str = $this->doDivAndSpan($str, 'div');
-		
-		$str = $this->doSimpleReplace($str);
-
-
-		wfRunHooks('w2lInternalFinish', array( &$this, &$str ) );
-
-		$this->profileOut(__METHOD__);
 		return $str;
 	}
 
@@ -970,7 +971,8 @@ class Wiki2LaTeXParser {
 					$caption = trim($part);
 				}
 				$title = Title::makeTitleSafe( NS_IMAGE, $imagename );
-				$file = LocalFile::newFromTitle( $title );
+				$this->repo = RepoGroup::singleton()->getLocalRepo();
+				$file = LocalFile::newFromTitle( $title, $this->repo );
 				$file->loadFromFile();
 				if ( $file && $file->exists() ) {
 					$imagepath = $file->getPath();
@@ -1523,21 +1525,8 @@ class Wiki2LaTeXParser {
 			$fc = substr ( $x , 0 , 1 ) ;
 			//$matches = array();
 			if ( preg_match( '/^(:*)\{\|(.*)$/', $x, $matches ) ) {
-				//Start of table: Extract LaTeX tips from attributes, make header.
-				$attributes = $this->unstripForHTML( $matches[2] );
-				$attributes_test = $this->parseAttrString($attributes);
-				
-				if ( array_key_exists('latexfmt', $attributes_test) ) {
-					$latexformat = $attributes_test['latexfmt'];
-					$latexformat = str_replace("\\", "", $latexformat);
-				}
-				
-				if ( array_key_exists('latexwidth', $attributes_test) ) {
-					$latexwidth = $attributes_test['latexwidth'];
-					$latexwidth = str_replace('\(\backslash{}\)', '\\', $latexwidth);
-				} else {
-					$latexwidth = '\linewidth';
-				}
+                
+
 				
 				/*
 				preg_match("/latexfmt=\"(.*?)\"/", $attributes, $latexformat);
@@ -1565,6 +1554,26 @@ class Wiki2LaTeXParser {
 				array_push ( $tr , false ) ;
 				array_push ( $ltr , '' ) ;
 				array_push ( $has_opened_tr, false );
+
+				//Start of table: Extract LaTeX tips from attributes, make header.
+				$attributes = $this->unstripForHTML( $matches[2] );
+                $this->debugMessage('Table: Attributes: ', $attributes);
+                $attributes = str_replace($this->sc['backslash'], '\\', $attributes);
+				$attributes_test = $this->parseAttrString($attributes);
+				
+				if ( array_key_exists('latexfmt', $attributes_test) ) {
+					$latexformat = $attributes_test['latexfmt'];
+					$latexformat = str_replace("\\", "", $latexformat);
+                    $this->debugMessage('Table: latexfmt: ', $latexformat);
+				}
+				
+				if ( array_key_exists('latexwidth', $attributes_test) ) {
+					$latexwidth = $attributes_test['latexwidth'];
+					$latexwidth = str_replace('\(\backslash{}\)', '\\', $latexwidth);
+                    $this->debugMessage('Table: latexwidth: ', $latexwidth);
+				} else {
+					$latexwidth = '\linewidth';
+				}
 
 				// start-of-table
 				array_push ( $thkr, $k );
@@ -1598,10 +1607,19 @@ class Wiki2LaTeXParser {
 				}
 				if ($in_table > 1) {
 					$t[$thk] = "{\begin{tabularx}{{$latexwidth}}{{$latexformat}}\\hline";
-					$t[$k] = "\end{tabularx}}".trim($ltx_caption);
+					$t[$k] = "\\end{tabularx}}".trim($ltx_caption);
 				} else {
-					$t[$thk] = "\begin{tabularx}{{$latexwidth}}{{$latexformat}}\\hline";
-					$t[$k] = "\end{tabularx}\n".trim($ltx_caption);
+                    // This table is not nested
+                    $this->debugMessage('Table: inserted latexfmt: ', $latexformat);
+                    $this->debugMessage('Table: inserted latexwidth ', $latexwidth);
+                    wfRunHooks("w2lTableLaTeXAttributes", array(&$this, &$latexformat, &$latexwidth));
+                    $table_head = "\begin{tabularx}{{$latexwidth}}{{$latexformat}}\\hline";
+                    $table_foot = "\\end{tabularx}\n".trim($ltx_caption);
+                    wfRunHooks("w2lTableHead", array(&$this, &$table_head));
+                    wfRunHooks("w2lTableFoot", array(&$this, &$table_foot));
+					$t[$thk] = $table_head;
+					$t[$k] = $table_foot;
+                    unset($table_head, $table_foot);
 				}
 
 				$in_table--;
@@ -1696,12 +1714,14 @@ class Wiki2LaTeXParser {
 					}
 					
 					if ( count ( $y ) == 1 ) {
+                        $y[0] = $this->fixContentforTableCells($y[0]);
 						if ($fc == '!') { //Heading cell highlighting
+                            
 							$y = "{$z}{$l}" . "\\textbf{" . "{$y[0]}}" ;
 						} else {
 							$y = "{$z}{$l}{$y[0]}" ;
 						}
-            				} else {
+                    } else {
 						$attributes = $this->unstripForHTML( $y[0] );
 
 						$multi_col = $this->checkColspan($attributes);
@@ -1745,7 +1765,13 @@ class Wiki2LaTeXParser {
 		}
 
 		return $result;
-	}
+    }
+    function fixContentForTableCells($content) {
+        $this->debugMessage('Zelleninhalt', $content );
+        $content = str_replace('<br>', '\newline ', $content);
+        return $content;
+    }
+
 	private function stripComments( $text = '' ) {
 		$fName = __METHOD__;
 		$this->profileIn(__METHOD__);
@@ -2140,7 +2166,7 @@ class Wiki2LaTeXParser {
 			break;
 			case W2L_TRANSCLUSION:
 				if ( '' == $args ) {
-					// Not sure, why this has been introduced. Commenting out the arrayx-fication, for this causes a warning...
+					// Not sure, why this has been introduced. Commenting out the array-fication, for this causes a warning...
 					// no arguments
 					$args = array();
 				}
@@ -2507,7 +2533,7 @@ class Wiki2LaTeXParser {
 		// returns a marker
 
 		++$this->marks_counter;
-		if ($number == -1) {
+		if ( $number == -1 ) {
 			$number = $this->marks_counter;
 		}
 		$marker = '((UNIQ-W2L-'.$this->unique.'-'.$tag.'-'.sprintf('%08X', $number).'-QINU))';
@@ -2544,12 +2570,12 @@ class Wiki2LaTeXParser {
 
 	function getPerPageDirectives($text) {
 		$matches = array();
-		$count = 0;
-		$expr = '/__([A-Z_])*__/';
+		$count   = 0;
+		$expr    = '/__([A-Z_])*__/';
 
 		$count = preg_match_all( $expr, $text, $matches);
 
-		foreach( $matches[0] as $directive ) {
+		foreach ( $matches[0] as $directive ) {
 			$this->directives[$directive] = true;
 			$this->debugMessage( 'GetPerPageDirectives', $directive );
 		}
@@ -2558,7 +2584,7 @@ class Wiki2LaTeXParser {
 	}
 
 	function hasDirective($directive) {
-		if (isset( $this->directives[$directive] ) && $this->directives[$directive] == true ) {
+		if ( isset( $this->directives[$directive] ) && $this->directives[$directive] == true ) {
 			return true;
 		}
 		return false;

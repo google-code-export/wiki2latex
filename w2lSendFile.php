@@ -29,7 +29,7 @@ $file  = addslashes( $_GET['fid'] );
 $fmt   = addslashes( $_GET['fmt'] );
 $title = addslashes( $_GET['title'] );
 
-$tmp = wfTempDir();
+$tmp = w2lTempDir();
 
 $title = w2lWebsafeTitle($title);
 

@@ -26,8 +26,9 @@ $tmpl = <<<EOF
 <latexfile name="Main">
 \documentclass[{$docClassOptions}]{{$docClass}}
 \usepackage[{$babel}]{babel} % Quotes won't work without babel
-\usepackage[utf8]{inputenc}  % This is very important!
+
 \usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}  % This is very important!
 
 ((W2L_REQUIRED_PACKAGES))
 
@@ -38,3 +39,4 @@ $tmpl = <<<EOF
 \end{document}
 </latexfile>
 EOF;
+
