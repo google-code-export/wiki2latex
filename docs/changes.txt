@@ -1,4 +1,4 @@
-== Aegir 2013-02-13==
+== 13 (released 2013-02-13)==
 * Fixed not escaping circumflex character
 * Fixed a php notice
 * Fixed linking to a media page of Mediawiki
