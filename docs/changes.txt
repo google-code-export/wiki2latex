@@ -1,4 +1,4 @@
-==Upcoming: Aegir==
+== Aegir 2013-02-13==
 * Fixed not escaping circumflex character
 * Fixed a php notice
 * Fixed linking to a media page of Mediawiki
@@ -7,7 +7,7 @@
 * Fixed an incompatibility with MW 1.18
 * Choosing a template which is only a redirect page resulted in an error. Now redirects are not shown any more.
 * Added support for Behavior switches (on page __DIRECTIVES__). 
-* Added a mathjax-contrib-file.
+* Added a mathjax-contrib-file (experimental atm)
 * Added some new Magic Words
 * (Hopefully) Fixed some bugs in table code 
 * Added new hooks
